@@ -3,765 +3,161 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zaui Booking Widget Creator - Premium Component Designer</title>
+    <title>Zaui Booking Widget Creator - Simple Designer</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Base Styles for the Control Panel (Kept clean for usability) */
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        /* Essential Inline Styles for Size Reduction */
+        body { font-family: 'Inter', sans-serif; margin: 0; padding: 0; min-height: 100vh; background-color: #f7f7f7; }
+        .control-panel { background: #ffffff; padding: 2rem; overflow-y: auto; height: auto; min-height: 50vh; }
+        h1, h2, h3 { font-family: sans-serif; }
         
-        body {
-            font-family: 'Inter', sans-serif;
-            margin: 0;
-            padding: 0;
-            min-height: 100vh;
-            background-color: #f7f7f7;
-        }
+        :root { --primary-color: #F59E0B; --primary-light: #FFDDAA; }
+        .main-title-accent { background-image: linear-gradient(to right, var(--primary-light), var(--primary-color)); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        .control-panel {
-            background: #ffffff;
-            border-right: 1px solid #e0e0e0;
-            padding: 2rem;
-            overflow-y: auto;
-            height: 100vh;
-        }
-
-        /* Utility Styles for Controls */
-        .loading-spinner {
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #8B5CF6;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .toggle-switch {
-            position: relative;
-            width: 44px;
-            height: 24px;
-            background-color: #e5e7eb;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        .toggle-switch.active {
-            background-color: #8B5CF6; 
-        }
-        .toggle-switch::after {
-            content: '';
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            width: 20px;
-            height: 20px;
-            background-color: white;
-            border-radius: 50%;
-            transition: transform 0.3s;
-        }
-        .toggle-switch.active::after {
-            transform: translateX(20px);
-        }
-        .input-control {
-            border-color: #D1D5DB !important;
-            background-color: #F9FAFB !important;
+        @media (min-width: 1024px) {
+            .full-designer-container { flex-direction: column; }
+            .control-panel { width: 100%; border-right: none; border-bottom: 1px solid #e0e0e0; }
+            .preview-area { width: 100%; height: 100vh; overflow-y: hidden; }
         }
     </style>
 </head>
-<body class="w-full h-screen flex">
+<body class="w-full min-h-screen flex flex-col">
     
-    <!-- LEFT SIDE: CONTROL PANEL -->
-    <div class="w-full lg:w-1/2 control-panel flex-shrink-0">
-        <h1 class="text-3xl font-bold text-gray-900 mb-2">
-            <span class="text-purple-600">Premium</span> Component Designer
-        </h1>
-        <p class="text-sm text-gray-500 mb-6">Configure the premium booking layout on the right.</p>
+    <!-- Design Tool Container -->
+    <div class="w-full flex flex-col lg:flex-row full-designer-container">
+        
+        <!-- TOP/LEFT SIDE: CONTROL PANEL -->
+        <div class="w-full lg:w-1/2 control-panel flex-shrink-0">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">
+                <span class="text-purple-600">Premium</span> Component Designer
+            </h1>
+            <p class="text-sm text-gray-500 mb-6">Configure the options below. The **Zaui Widget** is live in the preview area below.</p>
 
-        <div class="space-y-6">
+            <div class="space-y-6">
 
-            <!-- Zaui Embed Code -->
-            <div class="p-4 rounded-lg bg-red-50 border border-red-200">
-                <label for="zauiEmbed" class="block text-sm font-semibold text-red-700 mb-2">
-                    Zaui Iframe Source URL *
-                </label>
-                <input 
-                    type="url" 
-                    id="zauiEmbed" 
-                    class="w-full px-3 py-2 border-2 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-200 input-control text-sm"
-                    placeholder="e.g. https://yourcompany.zaui.net/booking/web/#/default/widget/activity/14..."
-                    value="https://bigbiketours.zaui.net/booking/web/#/default/widget/activity/14??embedStyle=embeddedframe"
-                />
-                <p class="text-xs text-red-500 mt-1">Ensure the URL is directly embeddable for the iframe.</p>
-            </div>
-
-            <!-- Global Colors -->
-            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                <h3 class="text-sm font-semibold text-gray-700 mb-4">Branding & Colors</h3>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-medium text-gray-600 mb-1">Primary Accent Color (e.g. Amber)</label>
-                        <input type="color" id="primaryColor" class="w-full h-10 border-2 rounded-lg" value="#F59E0B">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-gray-600 mb-1">Secondary Accent Color (e.g. Blue)</label>
-                        <input type="color" id="secondaryColor" class="w-full h-10 border-2 rounded-lg" value="#3B82F6">
-                    </div>
+                <!-- Zaui Embed Code -->
+                <div class="p-4 rounded-lg bg-red-50 border border-red-200">
+                    <label for="zauiEmbed" class="block text-sm font-semibold text-red-700 mb-2">
+                        Zaui Iframe Source URL *
+                    </label>
+                    <input 
+                        type="url" 
+                        id="zauiEmbed" 
+                        class="w-full px-3 py-2 border-2 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-200 text-sm"
+                        placeholder="e.g. https://yourcompany.zaui.net/booking/web/#/default/widget/activity/14..."
+                        value="https://bigbiketours.zaui.net/booking/web/#/default/widget/activity/14??embedStyle=embeddedframe"
+                        oninput="updatePreview()"
+                    />
+                    <p class="text-xs text-red-500 mt-1">**Changing this updates the live Zaui widget below.**</p>
                 </div>
-            </div>
 
-            <!-- Toggles for Main Sections -->
-            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                <h3 class="text-sm font-semibold text-gray-700 mb-3">Section Visibility</h3>
-                <div class="grid grid-cols-2 gap-3">
-                    <div class="flex items-center justify-between">
-                        <span class="text-sm text-gray-600">Left Info Panel</span>
-                        <div class="toggle-switch active" onclick="toggleElement('showInfoPanel')" id="toggleInfoPanel"></div>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <span class="text-sm text-gray-600">Mobile Header</span>
-                        <div class="toggle-switch active" onclick="toggleElement('showMobileHeader')" id="toggleMobileHeader"></div>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <span class="text-sm text-gray-600">Feature Grid</span>
-                        <div class="toggle-switch active" onclick="toggleElement('showFeatureGrid')" id="toggleFeatureGrid"></div>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <span class="text-sm text-gray-600">Testimonial Block</span>
-                        <div class="toggle-switch active" onclick="toggleElement('showTestimonial')" id="toggleTestimonial"></div>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <span class="text-sm text-gray-600">Progress Stepper</span>
-                        <div class="toggle-switch active" onclick="toggleElement('showStepper')" id="toggleStepper"></div>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <span class="text-sm text-gray-600">Frame Footer</span>
-                        <div class="toggle-switch active" onclick="toggleElement('showFrameFooter')" id="toggleFrameFooter"></div>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <span class="text-sm text-gray-600">Featured Image (Content)</span>
-                        <div class="toggle-switch active" onclick="toggleElement('showImageBlock')" id="toggleImageBlock"></div>
-                    </div>
-                </div>
-            </div>
+                <!-- Simplified Content Inputs -->
+                <div class="bg-white p-4 rounded-lg border border-gray-200 space-y-4">
+                    <h3 class="text-sm font-semibold text-gray-700 mb-3">Preview Content Inputs</h3>
+                    
+                    <label for="bgImageUrl" class="block text-xs font-medium text-gray-600">Background Image URL</label>
+                    <input type="url" id="bgImageUrl" class="w-full px-3 py-2 border-2 rounded-lg text-sm" value="https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?q=80&w=2039&auto=format&fit=crop" placeholder="Image URL" oninput="updatePreview()">
 
-            <!-- Left Panel Content Customization -->
-            <div class="bg-white p-4 rounded-lg border border-gray-200 space-y-4">
-                <h3 class="text-sm font-semibold text-gray-700 mb-3">Left Panel Content</h3>
-                
-                <label for="bgImageUrl" class="block text-xs font-medium text-gray-600">Background Image URL (Full Sidebar)</label>
-                <input type="url" id="bgImageUrl" class="w-full px-3 py-2 border-2 rounded-lg input-control text-sm" value="https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?q=80&w=2039&auto=format&fit=crop" placeholder="Image URL">
-
-                <label for="featuredImageUrl" class="block text-xs font-medium text-gray-600">Featured Image URL (In Content)</label>
-                <input type="url" id="featuredImageUrl" class="w-full px-3 py-2 border-2 rounded-lg input-control text-sm" value="https://images.unsplash.com/photo-1627850232468-d0505b225916?q=80&w=1770&auto=format&fit=crop" placeholder="Image URL for content section">
-                
-                <label for="mainTitle" class="block text-xs font-medium text-gray-600">Main Title (Line 1)</label>
-                <input type="text" id="mainTitle" class="w-full px-3 py-2 border-2 rounded-lg input-control text-sm" value="Amazing" placeholder="e.g. Amazing">
-                
-                <label for="titleAccent" class="block text-xs font-medium text-gray-600">Main Title (Line 2 / Accent)</label>
-                <input type="text" id="titleAccent" class="w-full px-3 py-2 border-2 rounded-lg input-control text-sm" value="Thailand" placeholder="e.g. Thailand">
-
-                <label for="descriptionText" class="block text-xs font-medium text-gray-600">Long Description Text</label>
-                <textarea id="descriptionText" rows="3" class="w-full px-3 py-2 border-2 rounded-lg input-control text-sm resize-none">Embark on the ultimate 10-day motorcycle odyssey through the legendary Golden Triangle. Conquer 1,864 curves, witness misty mountains, and experience the thrill of the R1148 dream road.</textarea>
-            </div>
-            
-            <!-- Feature Grid Customization (Just one for demo, but easily expandable) -->
-            <div class="bg-white p-4 rounded-lg border border-gray-200 space-y-4">
-                <h3 class="text-sm font-semibold text-gray-700 mb-3">Feature 1 (Top Left)</h3>
-                <label for="feature1Title" class="block text-xs font-medium text-gray-600">Title</label>
-                <input type="text" id="feature1Title" class="w-full px-3 py-2 border-2 rounded-lg input-control text-sm" value="The R1148">
-                <label for="feature1Desc" class="block text-xs font-medium text-gray-600">Description</label>
-                <input type="text" id="feature1Desc" class="w-full px-3 py-2 border-2 rounded-lg input-control text-sm" value="Top 10 World's Best Road">
-                <label for="feature1Icon" class="block text-xs font-medium text-gray-600">Icon Class (e.g., fas fa-route)</label>
-                <input type="text" id="feature1Icon" class="w-full px-3 py-2 border-2 rounded-lg input-control text-sm" value="fas fa-route">
-            </div>
-
-            <!-- Generate Button -->
-            <button 
-                id="generateBtn" 
-                onclick="generateDesign(true)"
-                class="w-full bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg shadow-purple-500/50 flex items-center justify-center space-x-2 text-lg mb-6"
-            >
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                </svg>
-                <span>Generate Live Preview</span>
-                <div id="loadingSpinner" class="loading-spinner hidden"></div>
-            </button>
-            
-        </div>
-    </div>
-
-    <!-- RIGHT SIDE: LIVE PREVIEW CONTAINER -->
-    <div class="w-full lg:w-1/2 bg-gray-100 flex-shrink-0 relative overflow-hidden">
-        <div id="previewContainer" class="w-full h-full">
-            <!-- Initial Placeholder -->
-            <div id="initialPlaceholder" class="flex items-center justify-center h-full text-gray-500">
-                <div class="text-center p-8">
-                    <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                    </svg>
-                    <h3 class="text-lg font-semibold mb-2 text-gray-500">Live Component Preview</h3>
-                    <p>Configure options on the left and click 'Generate Live Preview' to see the result here.</p>
+                    <label for="mainTitle" class="block text-xs font-medium text-gray-600">Main Title (Amazing)</label>
+                    <input type="text" id="mainTitle" class="w-full px-3 py-2 border-2 rounded-lg text-sm" value="Amazing" oninput="updatePreview()">
+                    
+                    <label for="titleAccent" class="block text-xs font-medium text-gray-600">Title Accent (Thailand)</label>
+                    <input type="text" id="titleAccent" class="w-full px-3 py-2 border-2 rounded-lg text-sm" value="Thailand" oninput="updatePreview()">
                 </div>
             </div>
         </div>
-        <!-- Copy Button for Generated HTML -->
-        <button id="copyCodeBtn" onclick="copyGeneratedCode()" class="hidden absolute bottom-4 right-4 px-3 py-1 bg-green-500 hover:bg-green-600 text-white rounded text-sm transition-colors duration-200 shadow-lg">
-            Copy HTML
-        </button>
-        <!-- Message Box for copy status -->
-        <div id="messageBox" class="hidden fixed top-4 left-1/2 transform -translate-x-1/2 p-3 rounded-lg text-sm transition-opacity duration-300"></div>
+
+        <!-- BOTTOM: LIVE PREVIEW CONTAINER (Zaui Widget Area) -->
+        <div class="w-full preview-area bg-gray-100 flex-shrink-0 relative overflow-hidden">
+            <div id="previewContainer" class="w-full h-full flex flex-col lg:flex-row bg-white overflow-hidden">
+
+                <!-- LEFT SIDEBAR: Simplified Info Panel -->
+                <div id="infoPanel" class="hidden lg:flex lg:w-1/2 bg-slate-900 text-white relative flex-col justify-between p-16 h-full z-10 overflow-y-auto no-scrollbar">
+                    <div class="absolute inset-0 z-0">
+                        <img id="previewBgImage" src="https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?q=80&w=2039&auto=format&fit=crop" 
+                            onerror="this.src='https://placehold.co/1200x800/1e293b/FFFFFF?text=Background+Image+Missing';"
+                            alt="Background Scenery" 
+                            class="w-full h-full object-cover opacity-30 mix-blend-overlay">
+                        <div class="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-900/80 to-slate-900/60"></div>
+                    </div>
+
+                    <div class="relative z-10 h-full flex flex-col justify-between space-y-8">
+                        <div>
+                            <h1 class="text-5xl xl:text-7xl font-bold leading-tight mb-6 drop-shadow-xl">
+                                <span id="previewMainTitle">Amazing</span> <br>
+                                <span class="text-transparent bg-clip-text main-title-accent" id="previewTitleAccent">Thailand</span>
+                            </h1>
+                            <p class="text-lg text-slate-300 max-w-xl leading-relaxed mb-10 font-light border-l-8 pl-6" style="border-color: var(--primary-color);">
+                                Embark on the ultimate 10-day motorcycle odyssey through the legendary Golden Triangle. Conquer 1,864 curves, witness misty mountains, and experience the thrill of the R1148 dream road.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- RIGHT SIDE: Booking Interface Container (Zaui Widget Location) -->
+                <div class="w-full lg:w-1/2 bg-slate-50 relative flex flex-col h-full overflow-hidden">
+                    <div class="relative z-10 p-4 lg:p-8 flex flex-col items-center justify-center h-full">
+                        
+                        <!-- THE FRAME: Full Height Card -->
+                        <div class="w-full h-full max-h-[90vh] bg-white rounded-2xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] border border-gray-200/60 overflow-hidden flex flex-col mb-4">
+                            
+                            <!-- Frame Header (Fixed) -->
+                            <div class="bg-white/80 backdrop-blur-md px-6 py-4 border-b border-gray-100 flex justify-between items-center z-20 flex-shrink-0">
+                                <div>
+                                    <h2 class="text-sm font-bold text-slate-900 tracking-tight">Select Travel Dates</h2>
+                                </div>
+                            </div>
+
+                            <!-- Frame Content (Widget - SCROLLABLE) -->
+                            <div class="flex-1 relative bg-white w-full overflow-hidden">
+                                <!-- Zaui Iframe: This is the Zaui Widget -->
+                                <iframe 
+                                    id="zauiWidgetIframe" 
+                                    class="w-full h-full absolute inset-0 z-10" 
+                                    title="Activity Widget" 
+                                    src="https://bigbiketours.zaui.net/booking/web/#/default/widget/activity/14??embedStyle=embeddedframe" 
+                                    frameborder="0" 
+                                    scrolling="yes">
+                                </iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
 
     <script>
-        // Global state and mappings
-        let generatedHTML = '';
-        let primaryColor = '#F59E0B'; // Default initial values
-        let secondaryColor = '#3B82F6'; // Default initial values
-
-        let designToggles = {
-            showInfoPanel: true,
-            showMobileHeader: true,
-            showFeatureGrid: true,
-            showTestimonial: true,
-            showStepper: true,
-            showFrameFooter: true,
-            showImageBlock: true,
-        };
-
-        document.addEventListener('DOMContentLoaded', () => {
-            // Read initial state from HTML classes on load
-            const toggleElements = [
-                'toggleInfoPanel', 'toggleMobileHeader', 'toggleFeatureGrid', 
-                'toggleTestimonial', 'toggleStepper', 'toggleFrameFooter', 'toggleImageBlock'
-            ];
-            toggleElements.forEach(id => {
-                const element = document.getElementById(id);
-                if (element) {
-                    const stateName = 'show' + id.replace('toggle', '');
-                    designToggles[stateName] = element.classList.contains('active');
-                }
-            });
-            
-            // Initial read of colors
-            updateColorState();
-
-            // Execute initial generation immediately on DOMContentLoaded for robust loading
-            generateDesign(false); 
-        });
-
-        // Function to update the global color variables based on input field values
-        function updateColorState() {
-            const primaryInput = document.getElementById('primaryColor');
-            const secondaryInput = document.getElementById('secondaryColor');
-            
-            if (primaryInput) primaryColor = primaryInput.value;
-            if (secondaryInput) secondaryColor = secondaryInput.value;
-        }
-
-        // --- Utility Functions ---
-
-        function showMessage(message, type = 'info') {
-            const msgBox = document.getElementById('messageBox');
-            msgBox.textContent = message;
-            msgBox.classList.remove('hidden', 'bg-green-500', 'bg-red-500', 'text-white', 'bg-gray-700');
-            
-            if (type === 'success') {
-                msgBox.classList.add('bg-green-500', 'text-white');
-            } else if (type === 'error') {
-                msgBox.classList.add('bg-red-500', 'text-white');
-            } else {
-                msgBox.classList.add('bg-gray-700', 'text-white');
-            }
-
-            msgBox.classList.add('opacity-100');
-
-            setTimeout(() => {
-                msgBox.classList.remove('opacity-100');
-                setTimeout(() => msgBox.classList.add('hidden'), 300);
-            }, 3000);
-        }
-
-        function copyGeneratedCode() {
-            if (!generatedHTML) {
-                showMessage('Generate the design first!', 'error');
-                return;
-            }
-            
-            // Fallback for secure copy
-            const textarea = document.createElement('textarea');
-            textarea.value = generatedHTML;
-            document.body.appendChild(textarea);
-            textarea.select();
-            
-            try {
-                const successful = document.execCommand('copy');
-                if (successful) {
-                    showMessage('Code copied to clipboard!', 'success');
-                } else {
-                    showMessage('Copy failed. Try manually selecting the text.', 'error');
-                }
-            } catch (err) {
-                showMessage('Copy failed. Try manually selecting the text.', 'error');
-            }
-            document.body.removeChild(textarea);
-        }
-
-        function toggleElement(stateName) {
-            // Toggle the internal state
-            designToggles[stateName] = !designToggles[stateName];
-
-            // Toggle the visual class (e.g., 'showInfoPanel' -> 'toggleInfoPanel')
-            const toggleBtnId = stateName.replace('show', 'toggle');
-            const toggleBtn = document.getElementById(toggleBtnId); 
-
-            if (toggleBtn) {
-                if (designToggles[stateName]) {
-                    toggleBtn.classList.add('active');
-                } else {
-                    toggleBtn.classList.remove('active');
-                }
-            }
-            // Re-generate design immediately on toggle for a smoother UX
-            // Pass true because toggles are effectively user clicks
-            generateDesign(true); 
-        }
-        
-        /**
-         * FIX: Highly robust escaping for HTML attributes inside the template literal.
-         * Addresses quotes, angle brackets, and backticks. (Fixes Reason #1 definitively)
-         */
-        function escapeHtml(text) {
-            if (typeof text !== 'string') return '';
-            return text
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;")
-                .replace(/`/g, "&#96;"); // Critical: Escape backticks
-        }
-
-        function adjustBrightness(hex, percent) {
-            hex = hex.replace('#', '');
-            const num = parseInt(hex, 16);
-            const amt = Math.round(2.55 * percent);
-            const R = (num >> 16) + amt;
-            const G = (num >> 8 & 0x00FF) + amt;
-            const B = (num & 0x0000FF) + amt;
-            
-            return '#' + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
-                (G < 255 ? G < 1 ? 0 : G : 255) * 100 +
-                (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
-        }
-
-        /**
-         * Uses a slight delay for document.write to help with iframe timing.
-         */
-        function displayGeneratedDesign(html) {
-            const previewContainer = document.getElementById('previewContainer');
-            previewContainer.innerHTML = ''; 
-
-            const iframe = document.createElement('iframe');
-            iframe.style.width = '100%';
-            iframe.style.height = '100%';
-            iframe.style.border = 'none';
-            iframe.style.backgroundColor = '#f7f7f7'; 
-
-            previewContainer.appendChild(iframe);
-
-            // Execute write after a slight delay to ensure iframe is ready
-            setTimeout(() => {
-                try {
-                    iframe.contentDocument.open();
-                    iframe.contentDocument.write(html);
-                    iframe.contentDocument.close();
-                } catch(e) {
-                    console.error("iFrame Write Error (Likely CSP Block):", e);
-                    // Fallback message inside the main window
-                    showMessage("Preview failed to initialize. A security policy (CSP) or network issue may be blocking external resources (Zaui/CDNs). Check your browser console.", 'error');
-                }
-            }, 50); // Increased stability delay
-
-            generatedHTML = html;
-        }
-
-        // --- Core Generation Logic ---
-        function generateDesign(isClick = false) { 
-            updateColorState(); 
-
-            // Read all dynamic content inputs
-            const zauiEmbed = document.getElementById('zauiEmbed').value;
-            const bgImageUrl = document.getElementById('bgImageUrl').value;
-            const featuredImageUrl = document.getElementById('featuredImageUrl').value; 
+        function updatePreview() {
+            // Get user input values
             const mainTitle = document.getElementById('mainTitle').value;
             const titleAccent = document.getElementById('titleAccent').value;
-            const descriptionText = document.getElementById('descriptionText').value;
+            const bgImageUrl = document.getElementById('bgImageUrl').value;
+            const zauiEmbed = document.getElementById('zauiEmbed').value;
 
-            // Feature 1 data 
-            const f1Title = document.getElementById('feature1Title').value;
-            const f1Desc = document.getElementById('feature1Desc').value;
-            const f1Icon = document.getElementById('feature1Icon').value;
-
-            // Show loading state
-            const generateBtn = document.getElementById('generateBtn');
-            const originalText = generateBtn.querySelector('span').textContent;
-            const spinner = document.getElementById('loadingSpinner');
+            // 1. Update the Zaui iframe source
+            const iframe = document.getElementById('zauiWidgetIframe');
+            if (iframe) iframe.src = zauiEmbed;
             
-            if (isClick) { 
-                generateBtn.disabled = true;
-                generateBtn.classList.add('cursor-not-allowed');
-                spinner.classList.remove('hidden');
-                generateBtn.querySelector('span').textContent = 'Generating...';
-                document.getElementById('copyCodeBtn').classList.add('hidden'); // Hide copy button during generation
-            } else {
-                // Hide initial placeholder immediately if generating on load
-                const placeholder = document.getElementById('initialPlaceholder');
-                if (placeholder) placeholder.style.display = 'none';
-            }
-
-
-            setTimeout(() => {
-                try {
-                    const html = createPremiumBookingPage({
-                        zauiEmbed, bgImageUrl, featuredImageUrl, mainTitle, titleAccent, descriptionText, 
-                        f1Title, f1Desc, f1Icon,
-                        primaryColor, secondaryColor,
-                        toggles: designToggles
-                    });
-
-                    displayGeneratedDesign(html);
-                    
-                    // Show message only if triggered by user click
-                    if (isClick) {
-                        showMessage('Premium component generated!', 'success');
-                    }
-                    
-                    document.getElementById('copyCodeBtn').classList.remove('hidden');
-                } catch (error) {
-                    console.error('Generation error (Critical JS Failure):', error);
-                    showMessage('CRITICAL ERROR: Failed to generate HTML string. See console.', 'error');
-                }
-                
-                // Hide loading state and restore button
-                if (isClick) {
-                    generateBtn.disabled = false;
-                    generateBtn.classList.remove('cursor-not-allowed');
-                    spinner.classList.add('hidden');
-                    generateBtn.querySelector('span').textContent = originalText;
-                }
-            }, 100); 
+            // 2. Update background image
+            const bgImg = document.getElementById('previewBgImage');
+            if (bgImg) bgImg.src = bgImageUrl;
+            
+            // 3. Update main text elements
+            const mainTitleSpan = document.getElementById('previewMainTitle');
+            if (mainTitleSpan) mainTitleSpan.textContent = mainTitle;
+            
+            const titleAccentSpan = document.getElementById('previewTitleAccent');
+            if (titleAccentSpan) titleAccentSpan.textContent = titleAccent;
         }
 
-        /**
-         * The HTML template builder function.
-         */
-        function createPremiumBookingPage(options) {
-            const { 
-                zauiEmbed, bgImageUrl, featuredImageUrl, mainTitle, titleAccent, descriptionText, 
-                f1Title, f1Desc, f1Icon,
-                primaryColor, secondaryColor,
-                toggles 
-            } = options;
-            
-            // --- Helper Styles based on chosen colors ---
-            const primaryLight = adjustBrightness(primaryColor, 40);
-            const primaryDark = adjustBrightness(primaryColor, -20);
-            const secondaryLight = adjustBrightness(secondaryColor, 40);
-            
-            // Default content for fixed/toggled sections
-            const defaultTags = `
-                <span class="px-3 py-1 bg-amber-500/20 text-amber-400 border border-amber-500/50 rounded-full text-[10px] font-bold uppercase tracking-widest backdrop-blur-sm shadow-lg" style="background: ${primaryLight}30; color: ${primaryColor}; border-color: ${primaryColor}70;">
-                    <i class="fas fa-crown mr-1"></i> Signature Tour
-                </span>
-                <span class="px-3 py-1 bg-white/10 text-white/80 border border-white/20 rounded-full text-[10px] font-bold uppercase tracking-widest backdrop-blur-sm">
-                    <i class="fas fa-bolt mr-1" style="color: ${secondaryLight};"></i> Level: Advanced
-                </span>
-            `;
-            
-            const featureItems = [
-                { icon: f1Icon, title: f1Title, desc: f1Desc, color: primaryColor },
-                { icon: 'fas fa-hotel', title: 'Luxury Stays', desc: 'Premium Resorts Included', color: secondaryColor },
-                { icon: 'fas fa-gas-pump', title: 'All Inclusive', desc: 'Fuel, Bike, Meals & Gear', color: '#10B981' }, // Green
-                { icon: 'fas fa-users', title: 'Expert Team', desc: 'Licensed Captains', color: '#EF4444' } // Red
-            ];
-
-            const featureGridHTML = toggles.showFeatureGrid ? `
-                <!-- Feature Grid -->
-                <div class="mt-8 grid grid-cols-2 gap-6">
-                    ${featureItems.map(item => `
-                        <div class="glass-card p-5 rounded-xl flex items-start gap-4">
-                            <div class="p-2 rounded-lg flex-shrink-0" style="background: ${item.color}20; color: ${item.color};">
-                                <i class="${escapeHtml(item.icon)} text-xl"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-white text-sm">${escapeHtml(item.title)}</h4>
-                                <p class="text-xs text-slate-400 mt-1">${escapeHtml(item.desc)}</p>
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-            ` : '';
-            
-            const testimonialBlock = toggles.showTestimonial ? `
-                <!-- Testimonial / Trust -->
-                <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-                    <div class="flex items-center gap-4">
-                        <div class="flex -space-x-3 hover:space-x-1 transition-all duration-300">
-                            <img class="w-10 h-10 rounded-full border-2 border-slate-900" src="https://i.pravatar.cc/150?img=68" alt="User" onerror="this.src='https://placehold.co/150x150/f0abf2/FFFFFF?text=A'">
-                            <img class="w-10 h-10 rounded-full border-2 border-slate-900" src="https://i.pravatar.cc/150?img=33" alt="User" onerror="this.src='https://placehold.co/150x150/f0abf2/FFFFFF?text=B'">
-                            <img class="w-10 h-10 rounded-full border-2 border-slate-900" src="https://i.pravatar.cc/150?img=12" alt="User" onerror="this.src='https://placehold.co/150x150/f0abf2/FFFFFF?text=C'">
-                            <div class="w-10 h-10 rounded-full border-2 border-slate-900 bg-slate-700 text-white flex items-center justify-center text-xs font-bold">+500</div>
-                        </div>
-                        <div>
-                            <div class="text-xs" style="color: ${primaryColor};">
-                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
-                            </div>
-                            <span class="text-xs text-slate-400">Trusted by riders worldwide</span>
-                        </div>
-                    </div>
-                </div>
-            ` : '';
-            
-            const mobileHeader = toggles.showMobileHeader ? `
-                <!-- Mobile Only Header -->
-                <div class="lg:hidden bg-slate-900 text-white p-6 relative flex-shrink-0 overflow-hidden">
-                    <div class="absolute top-0 right-0 -mr-10 -mt-10 w-40 h-40 rounded-full mix-blend-multiply filter blur-3xl opacity-20" style="background-color: ${primaryColor};"></div>
-                    <div class="relative z-10">
-                        <h1 class="text-2xl font-bold font-serif mb-2">${escapeHtml(mainTitle)} ${escapeHtml(titleAccent)}</h1>
-                        <p class="text-xs text-slate-300">10 Days • Chiang Mai Loop</p>
-                    </div>
-                </div>
-            ` : '';
-
-            const progressStepper = toggles.showStepper ? `
-                <!-- Progress Stepper -->
-                <div class="w-full max-w-2xl mb-4 flex items-center justify-between px-2 flex-shrink-0">
-                    <div class="flex flex-col items-center">
-                        <div class="w-8 h-8 rounded-full text-white flex items-center justify-center text-xs font-bold mb-1 shadow-lg ring-4 ring-white" style="background-color: ${primaryColor};">1</div>
-                        <span class="text-[10px] font-bold text-slate-700 uppercase tracking-wide">Dates</span>
-                    </div>
-                    <div class="h-0.5 flex-1 bg-gray-200 mx-2 mb-4"></div>
-                    <div class="flex flex-col items-center opacity-40">
-                        <div class="w-8 h-8 rounded-full bg-slate-200 text-slate-500 flex items-center justify-center text-xs font-bold mb-1">2</div>
-                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Details</span>
-                    </div>
-                    <div class="h-0.5 flex-1 bg-gray-200 mx-2 mb-4"></div>
-                    <div class="flex flex-col items-center opacity-40">
-                        <div class="w-8 h-8 rounded-full bg-slate-200 text-slate-500 flex items-center justify-center text-xs font-bold mb-1">3</div>
-                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Confirm</span>
-                    </div>
-                </div>
-            ` : '';
-
-            const frameFooter = toggles.showFrameFooter ? `
-                <!-- Frame Footer (Fixed) -->
-                <div class="bg-slate-50 border-t border-gray-100 p-3 text-center z-20 flex-shrink-0">
-                    <div class="flex items-center justify-center gap-4 text-[10px] text-gray-400 font-medium tracking-wide uppercase">
-                        <span class="flex items-center gap-1.5"><i class="fas fa-lock text-green-600"></i> SSL Secure</span>
-                        <span class="h-3 w-px bg-gray-300"></span>
-                        <span class="flex items-center gap-1.5" style="color: ${secondaryColor};"><i class="fas fa-headset"></i> 24/7 Support</span>
-                    </div>
-                </div>
-            ` : '';
-            
-            // Featured Image Block HTML (Improved with hover effect)
-            const imageBlockHTML = toggles.showImageBlock ? `
-                <!-- Featured Image Block -->
-                <div class="w-full h-60 rounded-xl overflow-hidden shadow-2xl mb-8 border border-white/20 transform hover:scale-[1.01] transition-transform duration-500 ease-out">
-                    <img src="${escapeHtml(featuredImageUrl)}" 
-                              onerror="this.onerror=null;this.src='https://placehold.co/1200x600/3b446a/FFFFFF?text=FEATURED+IMAGE+MISSING';"
-                              alt="Featured Tour Image" 
-                              class="w-full h-full object-cover transition-transform duration-500 ease-out hover:scale-[1.03]">
-                </div>
-            ` : '';
-            
-            const infoPanelContent = toggles.showInfoPanel ? `
-                <!-- LEFT SIDEBAR: Premium Info (Sticky) -->
-                <div class="hidden lg:flex lg:w-1/2 bg-slate-900 text-white relative flex-col justify-between p-10 lg:p-16 h-full z-10 overflow-y-auto no-scrollbar">
-                    
-                    <!-- Background Image with Overlay (Stronger Gradient) -->
-                    <div class="absolute inset-0 z-0">
-                        <img src="${escapeHtml(bgImageUrl)}" 
-                            onerror="this.onerror=null;this.src='https://placehold.co/1200x800/1e293b/FFFFFF?text=Background+Image+Missing';"
-                            alt="Background Scenery" 
-                            class="w-full h-full object-cover opacity-30 mix-blend-overlay">
-                        <!-- ENHANCED OVERLAY: Stronger visibility -->
-                        <div class="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-900/80 to-slate-900/60"></div>
-                    </div>
-
-                    <!-- Decorative Elements -->
-                    <div class="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse" style="background-color: ${primaryColor};"></div>
-                    <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 rounded-full mix-blend-multiply filter blur-3xl opacity-20" style="background-color: ${secondaryColor};"></div>
-
-                    <!-- Content Container -->
-                    <div class="relative z-10 h-full flex flex-col justify-between space-y-8">
-                        
-                        <div>
-                            ${imageBlockHTML} 
-
-                            <div class="flex items-center gap-3 mb-8">
-                                ${defaultTags}
-                            </div>
-
-                            <!-- Title with stronger drop shadow -->
-                            <h1 class="text-5xl xl:text-7xl font-bold leading-tight mb-6 drop-shadow-xl">
-                                ${escapeHtml(mainTitle)} <br>
-                                <span class="text-transparent bg-clip-text bg-gradient-to-r" style="background-image: linear-gradient(to right, ${primaryLight}, ${primaryColor});">${escapeHtml(titleAccent)}</span>
-                            </h1>
-                            
-                            <!-- Description with thicker border -->
-                            <p class="text-lg text-slate-300 max-w-xl leading-relaxed mb-10 font-light border-l-8 pl-6" style="border-color: ${primaryColor};">
-                                ${escapeHtml(descriptionText)}
-                            </p>
-
-                            ${featureGridHTML}
-                        </div>
-
-                        ${testimonialBlock}
-                    </div>
-                </div>
-            ` : `<div class="hidden lg:flex lg:w-1/2 bg-gray-900 text-white h-full relative flex-col items-center justify-center">
-                    <p class="text-gray-500">Info Panel Disabled</p>
-                </div>`; 
-
-            // This entire block is the content for the IFRAME
-            return `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${escapeHtml(mainTitle)} ${escapeHtml(titleAccent)} Booking</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <!-- FontAwesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        /* --- DYNAMIC STYLES --- */
-        .h1-accent {
-            background-image: linear-gradient(to right, ${primaryLight}, ${primaryColor});
-        }
-        .main-cta {
-            background: linear-gradient(to right, ${primaryColor}, ${primaryDark});
-            box-shadow: 0 10px 20px ${primaryColor}40;
-        }
-        /* --- FIXED STYLES --- */
-        body { 
-            font-family: 'Inter', sans-serif; 
-            margin: 0; 
-            padding: 0; 
-            overflow: hidden; 
-            height: 100vh;
-        }
-        h1, h2, h3 { font-family: 'Playfair Display', serif; }
-        
-        .glass-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: transform 0.3s ease;
-        }
-        .glass-card:hover {
-            transform: translateY(-5px);
-            background: rgba(255, 255, 255, 0.15);
-        }
-
-        /* Hide scrollbar for Chrome, Safari and Opera */
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        /* Hide scrollbar for IE, Edge and Firefox */
-        .no-scrollbar {
-            -ms-overflow-style: none;  /* IE and Edge */
-            scrollbar-width: none;  /* Firefox */
-        }
-        
-        /* Ensure iframe is fully contained and scrollable */
-        #zaui-widget-activity-iframe {
-            height: 100%;
-            width: 100%;
-        }
-
-    </style>
-</head>
-<body class="bg-white w-full h-full">
-
-    <!-- Main Container: Full Width, H-Screen Layout -->
-    <div class="w-full h-screen flex flex-col lg:flex-row bg-white overflow-hidden">
-        
-        ${infoPanelContent}
-
-        <!-- RIGHT SIDE: Booking Interface Container (Fixed Height with Internal Scroll) -->
-        <div class="w-full lg:w-1/2 bg-slate-50 relative flex flex-col h-full overflow-hidden">
-            
-            <!-- Pattern Background -->
-            <div class="absolute inset-0 z-0 opacity-[0.03]" style="background-image: radial-gradient(#000 1px, transparent 1px); background-size: 20px 20px;"></div>
-
-            ${mobileHeader}
-
-            <!-- Centered Frame Container -->
-            <div class="relative z-10 p-4 lg:p-8 flex flex-col items-center justify-center h-full">
-                
-                ${progressStepper}
-
-                <!-- THE FRAME: Full Height Card -->
-                <div class="w-full h-full max-h-[90vh] bg-white rounded-2xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] border border-gray-200/60 overflow-hidden flex flex-col mb-4">
-                    
-                    <!-- Frame Header (Fixed) -->
-                    <div class="bg-white/80 backdrop-blur-md px-6 py-4 border-b border-gray-100 flex justify-between items-center z-20 flex-shrink-0">
-                        <div>
-                            <h2 class="text-sm font-bold text-slate-900 tracking-tight">Select Travel Dates</h2>
-                            <p class="text-[10px] text-slate-500 mt-0.5">Best prices guaranteed for direct booking</p>
-                        </div>
-                        <div class="flex items-center gap-1.5 px-2 py-1 bg-green-50 rounded-full border border-green-100">
-                             <div class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
-                            <span class="text-[10px] font-bold text-green-700 uppercase tracking-wide">Available</span>
-                        </div>
-                    </div>
-
-                    <!-- Frame Content (Widget - SCROLLABLE) -->
-                    <div class="flex-1 relative bg-white w-full overflow-hidden">
-                        <!-- Loading Spinner (Visible while the iframe content loads) -->
-                        <div class="absolute inset-0 flex items-start justify-center pt-20 z-0 bg-white" id="iframeLoader">
-                            <i class="fas fa-circle-notch fa-spin text-gray-300 text-2xl"></i>
-                        </div>
-                        
-                        <!-- Iframe: set to h-full to fill container, scrolling=yes enabled -->
-                        <iframe 
-                            id="zaui-widget-activity-iframe" 
-                            class="w-full h-full absolute inset-0 z-10 opacity-0 transition-opacity duration-500" 
-                            title="Activity Widget" 
-                            src="${escapeHtml(zauiEmbed)}" 
-                            onload="this.classList.remove('opacity-0'); document.getElementById('iframeLoader').style.display = 'none';"
-                            onerror="document.getElementById('iframeLoader').innerHTML = '<p class=\\"text-red-500\\">Error loading widget source.</p>'"
-                            frameborder="0" 
-                            scrolling="yes">
-                        </iframe>
-                    </div>
-            
-                    ${frameFooter}
-                </div>
-                
-                <!-- Floating Help Button -->
-                <button class="flex items-center gap-2 text-slate-500 hover:text-slate-800 transition-colors text-xs font-medium flex-shrink-0">
-                    <i class="far fa-question-circle"></i> Need help with your booking?
-                </button>
-
-            </div>
-
-        </div>
-    </div>
-
-</body>
-</html>`;
-        }
+        // Run update on initial load - REMOVED: document.addEventListener('DOMContentLoaded', updatePreview);
+        // Instead, we will rely on oninput events and run it once immediately.
+        updatePreview();
     </script>
 </body>
 </html>
