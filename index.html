@@ -65,7 +65,26 @@
                     
                     <label for="titleAccent" class="block text-xs font-medium text-gray-600">Title Accent (Thailand)</label>
                     <input type="text" id="titleAccent" class="w-full px-3 py-2 border-2 rounded-lg text-sm" value="Thailand" oninput="updatePreview()">
+
+                    <!-- NEW: Editable Description Textarea -->
+                    <label for="descriptionText" class="block text-xs font-medium text-gray-600">Description Text (Editable)</label>
+                    <textarea 
+                        id="descriptionText" 
+                        rows="3" 
+                        class="w-full px-3 py-2 border-2 rounded-lg text-sm resize-none" 
+                        oninput="updatePreview()"
+                    >Embark on the ultimate 10-day motorcycle odyssey through the legendary Golden Triangle. Conquer 1,864 curves, witness misty mountains, and experience the thrill of the R1148 dream road.</textarea>
                 </div>
+
+                <!-- NEW: Copy HTML Button -->
+                <button 
+                    id="copyCodeBtn" 
+                    onclick="copyGeneratedCode()" 
+                    class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-200 shadow-lg text-lg flex items-center justify-center space-x-2"
+                >
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M12 4.5v15M16 10H8"></path></svg>
+                    <span>Copy Generated HTML Code</span>
+                </button>
             </div>
         </div>
 
@@ -89,7 +108,7 @@
                                 <span id="previewMainTitle">Amazing</span> <br>
                                 <span class="text-transparent bg-clip-text main-title-accent" id="previewTitleAccent">Thailand</span>
                             </h1>
-                            <p class="text-lg text-slate-300 max-w-xl leading-relaxed mb-10 font-light border-l-8 pl-6" style="border-color: var(--primary-color);">
+                            <p id="previewDescription" class="text-lg text-slate-300 max-w-xl leading-relaxed mb-10 font-light border-l-8 pl-6" style="border-color: var(--primary-color);">
                                 Embark on the ultimate 10-day motorcycle odyssey through the legendary Golden Triangle. Conquer 1,864 curves, witness misty mountains, and experience the thrill of the R1148 dream road.
                             </p>
                         </div>
@@ -138,6 +157,7 @@
             const titleAccent = document.getElementById('titleAccent').value;
             const bgImageUrl = document.getElementById('bgImageUrl').value;
             const zauiEmbed = document.getElementById('zauiEmbed').value;
+            const descText = document.getElementById('descriptionText').value; // NEW: Read description
 
             // 1. Update the Zaui iframe source
             const iframe = document.getElementById('zauiWidgetIframe');
@@ -153,10 +173,99 @@
             
             const titleAccentSpan = document.getElementById('previewTitleAccent');
             if (titleAccentSpan) titleAccentSpan.textContent = titleAccent;
+
+            // 4. NEW: Update description text
+            const descElement = document.getElementById('previewDescription');
+            if (descElement) descElement.textContent = descText;
+        }
+        
+        // Helper function to generate the complete, embeddable HTML string
+        function getGeneratedHTML() {
+            const mainTitle = document.getElementById('mainTitle').value;
+            const titleAccent = document.getElementById('titleAccent').value;
+            const bgImageUrl = document.getElementById('bgImageUrl').value;
+            const zauiEmbed = document.getElementById('zauiEmbed').value;
+            const descText = document.getElementById('descriptionText').value;
+            
+            // NOTE: This must be a single, complete HTML document string
+            return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${mainTitle} ${titleAccent} Booking Component</title>
+    <!-- Use Tailwind CDN for the generated component -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Embedded CSS from Designer */
+        body { margin: 0; padding: 0; min-height: 100vh; font-family: sans-serif; }
+        :root { --p: #F59E0B; --pl: #FFDDAA; }
+        .acc { background-image: linear-gradient(to right, var(--pl), var(--p)); }
+        .h-full { height: 100%; } .w-full { width: 100%; } .abs { position: absolute; } .ins { inset: 0; }
+        /* Responsive layout */
+        .flex-lg-row { display: flex; flex-direction: column; }
+        @media (min-width: 1024px) { .flex-lg-row { flex-direction: row; } }
+    </style>
+</head>
+<body class="w-full h-full bg-slate-50">
+    <div class="w-full h-screen flex-lg-row">
+        
+        <!-- LEFT SIDEBAR: Info Panel -->
+        <div class="hidden lg:flex w-1/2 bg-slate-900 text-white relative flex-col justify-between p-16 h-full overflow-y-auto">
+            <div class="abs ins z-0">
+                <img src="${bgImageUrl}" class="w-full h-full object-cover opacity-30">
+                <div class="abs ins bg-gradient-to-br from-slate-900 via-slate-900/80 to-slate-900/60"></div>
+            </div>
+            <div class="relative z-10">
+                <h1 class="text-5xl font-bold mb-6 drop-shadow-xl">
+                    <span>${mainTitle}</span> <br>
+                    <span class="text-transparent bg-clip-text acc">${titleAccent}</span>
+                </h1>
+                <p class="text-lg text-slate-300 max-w-xl border-l-8 pl-6" style="border-color: var(--p);">
+                    ${descText}
+                </p>
+            </div>
+        </div>
+        
+        <!-- RIGHT SIDE: ZAUI WIDGET -->
+        <div class="w-full lg:w-1/2 bg-slate-50 relative flex flex-col h-full">
+            <div class="p-8 flex flex-col items-center justify-center h-full">
+                <div class="w-full h-full max-h-[90vh] bg-white rounded-2xl shadow-xl border border-gray-200/60 overflow-hidden flex flex-col">
+                    <div class="bg-white/80 px-6 py-4 border-b border-gray-100 flex-shrink-0">
+                        <h2 class="text-sm font-bold text-slate-900">Select Travel Dates</h2>
+                    </div>
+                    <div class="flex-1 relative bg-white w-full overflow-hidden">
+                        <iframe id="zauiWidgetIframe" class="w-full h-full abs ins z-10" title="Activity Widget" src="${zauiEmbed}" frameborder="0" scrolling="yes"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>`;
         }
 
-        // Run update on initial load - REMOVED: document.addEventListener('DOMContentLoaded', updatePreview);
-        // Instead, we will rely on oninput events and run it once immediately.
+        function copyGeneratedCode() {
+            const htmlToCopy = getGeneratedHTML();
+
+            const textarea = document.createElement('textarea');
+            textarea.value = htmlToCopy;
+            document.body.appendChild(textarea);
+            textarea.select();
+            
+            let message = 'Code copied to clipboard! (Check console for confirmation)';
+            try {
+                if (!document.execCommand('copy')) {
+                    message = 'Copy failed. Please try manually.';
+                }
+            } catch (err) {
+                message = 'Copy failed. Please try manually.';
+            }
+            console.log(message);
+            document.body.removeChild(textarea);
+        }
+
+        // Run update on initial load
         updatePreview();
     </script>
 </body>
