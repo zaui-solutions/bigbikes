@@ -71,30 +71,63 @@
                 <input 
                     type="url" 
                     id="zauiEmbed" 
-                    class="border-red-300 text-sm focus:border-red-500 focus:ring-red-500 w-full rounded-md mt-1"
+                    class="border-red-300 text-sm focus:border-red-500 focus:ring-red-500 w-full rounded-lg mt-1 p-2"
                     value="https://bigbiketours.zaui.net/booking/web/#/default/widget/activity/14??embedStyle=embeddedframe"
                 />
                 <p class="text-xs text-red-500 mt-1">Click 'Apply Changes' after updating this URL.</p>
             </div>
 
-            <!-- Content Inputs -->
-            <div class="p-4 border border-gray-200 bg-white rounded-lg mb-6 shadow-inner">
-                <h3 class="text-sm font-bold text-gray-700 mb-3">Preview Content Inputs</h3>
+            <!-- New: Sizing Inputs -->
+            <div class="p-4 border border-blue-200 bg-blue-50 rounded-xl mb-6 shadow-inner">
+                <h3 class="text-base font-extrabold text-blue-700 mb-4 border-b pb-2 border-blue-300">Widget Dimensions (Embedded)</h3>
                 
-                <label for="bgImageUrl" class="text-xs">Background Image URL</label>
-                <input type="url" id="bgImageUrl" class="text-sm" value="https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?q=80&w=2039&auto=format&fit=crop" placeholder="Image URL">
+                <div class="space-y-3">
+                    <div>
+                        <label for="widgetWidth" class="text-xs font-medium text-blue-700">Widget Width (e.g., 100%, 800px)</label>
+                        <input type="text" id="widgetWidth" class="text-sm w-full p-2 border border-blue-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" value="100%">
+                    </div>
+                    
+                    <div>
+                        <label for="widgetHeight" class="text-xs font-medium text-blue-700">Widget Minimum Height (e.g., 650px)</label>
+                        <input type="text" id="widgetHeight" class="text-sm w-full p-2 border border-blue-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" value="650px">
+                    </div>
+                </div>
+            </div>
 
-                <label for="mainTitle" class="text-xs">Main Title</label>
-                <input type="text" id="mainTitle" class="text-sm" value="Amazing">
-                
-                <label for="titleAccent" class="text-xs">Title Accent</label>
-                <input type="text" id="titleAccent" class="text-sm" value="Thailand">
+            <!-- Refactored: Content Inputs -->
+            <div class="p-5 border border-gray-200 bg-gray-50 rounded-xl mb-6 shadow-lg">
+                <h3 class="text-base font-extrabold text-gray-800 mb-4 border-b pb-2 border-gray-300">Widget Content Preview</h3>
 
-                <label for="descriptionText" class="text-xs">Description Text</label>
-                <textarea id="descriptionText" rows="3" class="text-sm resize-none">Embark on the ultimate 10-day motorcycle odyssey through the legendary Golden Triangle. Conquer 1,864 curves, witness misty mountains, and experience the thrill of the R1148 dream road.</textarea>
-                
-                <label for="additionalInfoText" class="text-xs">Additional Footer Information</label>
-                <textarea id="additionalInfoText" rows="2" class="text-sm resize-none">Prices are quoted in USD and subject to change based on exchange rates. Contact us for group rates.</textarea>
+                <div class="space-y-4">
+                    <!-- Title Group -->
+                    <div>
+                        <label for="mainTitle" class="text-xs font-medium text-gray-600">Main Title</label>
+                        <input type="text" id="mainTitle" class="text-sm w-full p-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500" value="Amazing">
+                    </div>
+                    
+                    <div>
+                        <label for="titleAccent" class="text-xs font-medium text-gray-600">Title Accent</label>
+                        <input type="text" id="titleAccent" class="text-sm w-full p-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500" value="Thailand">
+                    </div>
+
+                    <!-- Image Group -->
+                    <div class="pt-2 border-t border-gray-200">
+                        <label for="bgImageUrl" class="text-xs font-medium text-gray-600">Background Image URL</label>
+                        <input type="url" id="bgImageUrl" class="text-sm w-full p-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500" value="https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?q=80&w=2039&auto=format&fit=crop" placeholder="Image URL">
+                    </div>
+
+                    <!-- Description Group -->
+                    <div class="pt-2 border-t border-gray-200">
+                        <label for="descriptionText" class="text-xs font-medium text-gray-600">Description Text</label>
+                        <textarea id="descriptionText" rows="3" class="text-sm w-full p-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 resize-none">Embark on the ultimate 10-day motorcycle odyssey through the legendary Golden Triangle. Conquer 1,864 curves, witness misty mountains, and experience the thrill of the R1148 dream road.</textarea>
+                    </div>
+                    
+                    <!-- Footer Info Group -->
+                    <div>
+                        <label for="additionalInfoText" class="text-xs font-medium text-gray-600">Additional Footer Information</label>
+                        <textarea id="additionalInfoText" rows="2" class="text-sm w-full p-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 resize-none">Prices are quoted in USD and subject to change based on exchange rates. Contact us for group rates.</textarea>
+                    </div>
+                </div>
             </div>
 
             <!-- Action Buttons -->
@@ -211,13 +244,18 @@
             const description = document.getElementById('descriptionText').value.replace(/\n/g, '<br>');
             const info = document.getElementById('additionalInfoText').value.replace(/\n/g, '<br>');
             const infoDisplay = info.trim() ? 'block' : 'none';
+            
+            // New: Get widget size inputs
+            const widgetWidth = document.getElementById('widgetWidth').value || '100%';
+            const widgetHeight = document.getElementById('widgetHeight').value || '650px';
+
 
             // --- The final, clean, embeddable HTML structure ---
             return `
 <!-- Start Zaui Booking Component -->
-<div style="font-family: sans-serif; display: flex; flex-direction: column; width: 100%; max-width: 1200px; margin: 0 auto; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1); background-color: #fff;">
+<div style="font-family: sans-serif; display: flex; flex-direction: column; width: ${widgetWidth}; min-height: ${widgetHeight}; margin: 0 auto; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1); background-color: #fff;">
     <style>
-        .widget-container { display: flex; flex-direction: column; min-height: 600px; }
+        .widget-container { display: flex; flex-direction: column; height: 100%; }
         .info-panel { padding: 3rem 2rem; color: #fff; position: relative; flex: 1; display: none; }
         .info-panel-lg { display: flex; flex-direction: column; justify-content: space-between; height: 100%; position: relative; z-index: 1; }
         .widget-frame { padding: 1.5rem; background-color: #f8fafc; flex: 1; display: flex; align-items: center; justify-content: center; }
