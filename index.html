@@ -3,270 +3,341 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zaui Booking Widget Creator - Simple Designer</title>
+    <title>Zaui Booking Widget Designer</title>
+    <!-- Load Tailwind CSS for modern, responsive styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Essential Inline Styles for Size Reduction */
-        body { font-family: 'Inter', sans-serif; margin: 0; padding: 0; min-height: 100vh; background-color: #f7f7f7; }
-        .control-panel { background: #ffffff; padding: 2rem; overflow-y: auto; height: auto; min-height: 50vh; }
-        h1, h2, h3 { font-family: sans-serif; }
-        
-        :root { --primary-color: #F59E0B; --primary-light: #FFDDAA; }
-        .main-title-accent { background-image: linear-gradient(to right, var(--primary-light), var(--primary-color)); }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
+        /* Custom styles to handle layout priority and ensure full height */
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+        }
+        /* Flex container for mobile (stacking) and desktop (side-by-side) */
+        .designer-container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
         @media (min-width: 1024px) {
-            .full-designer-container { flex-direction: column; }
-            .control-panel { width: 100%; border-right: none; border-bottom: 1px solid #e0e0e0; }
-            .preview-area { width: 100%; height: 100vh; overflow-y: hidden; }
+            .designer-container {
+                flex-direction: row;
+                height: 100vh;
+            }
+        }
+
+        /* Control Panel scrolling area */
+        .control-panel {
+            overflow-y: auto;
+            flex-shrink: 0;
+            max-height: 100vh; /* Prevent it from expanding infinitely */
+        }
+
+        /* Preview Area ensures the preview content uses remaining height */
+        .preview-area {
+            flex-grow: 1;
+            overflow: hidden;
+            display: flex;
+        }
+
+        /* Input/Button common styles (resetting browser defaults) */
+        input:not([type="color"]), textarea, button {
+            transition: all 0.2s;
+        }
+        
+        /* Iframe wrapper for fixed height control */
+        .widget-iframe-wrapper {
+            height: 90%; 
+            max-height: 90vh;
         }
     </style>
 </head>
-<body class="w-full min-h-screen flex flex-col">
-    
-    <!-- Design Tool Container -->
-    <div class="w-full flex flex-col lg:flex-row full-designer-container">
-        
-        <!-- TOP/LEFT SIDE: CONTROL PANEL -->
-        <div class="w-full lg:w-1/2 control-panel flex-shrink-0">
-            <h1 class="text-3xl font-bold text-gray-900 mb-2">
-                <span class="text-purple-600">Premium</span> Component Designer
+<body class="bg-gray-50">
+
+    <div class="designer-container">
+
+        <!-- LEFT SIDE: CONTROL PANEL -->
+        <div class="control-panel w-full lg:w-96 bg-white p-6 shadow-2xl rounded-tr-xl rounded-br-xl">
+            <h1 class="text-2xl font-extrabold text-gray-900 mb-1">
+                <span class="text-indigo-600">Widget</span> Designer
             </h1>
-            <p class="text-sm text-gray-500 mb-6">Configure the options below. The **Zaui Widget** is live in the preview area below.</p>
+            <p class="text-sm text-gray-500 mb-6">Configure the component and copy the code below.</p>
 
-            <div class="space-y-6">
-
-                <!-- Zaui Embed Code -->
-                <div class="p-4 rounded-lg bg-red-50 border border-red-200">
-                    <label for="zauiEmbed" class="block text-sm font-semibold text-red-700 mb-2">
-                        Zaui Iframe Source URL *
-                    </label>
-                    <input 
-                        type="url" 
-                        id="zauiEmbed" 
-                        class="w-full px-3 py-2 border-2 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-200 text-sm"
-                        placeholder="e.g. https://yourcompany.zaui.net/booking/web/#/default/widget/activity/14..."
-                        value="https://bigbiketours.zaui.net/booking/web/#/default/widget/activity/14??embedStyle=embeddedframe"
-                        oninput="updatePreview()"
-                    />
-                    <p class="text-xs text-red-500 mt-1">**Changing this updates the live Zaui widget below.**</p>
-                </div>
-
-                <!-- Simplified Content Inputs -->
-                <div class="bg-white p-4 rounded-lg border border-gray-200 space-y-4">
-                    <h3 class="text-sm font-semibold text-gray-700 mb-3">Preview Content Inputs</h3>
-                    
-                    <label for="bgImageUrl" class="block text-xs font-medium text-gray-600">Background Image URL</label>
-                    <input type="url" id="bgImageUrl" class="w-full px-3 py-2 border-2 rounded-lg text-sm" value="https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?q=80&w=2039&auto=format&fit=crop" placeholder="Image URL" oninput="updatePreview()">
-
-                    <label for="mainTitle" class="block text-xs font-medium text-gray-600">Main Title (Amazing)</label>
-                    <input type="text" id="mainTitle" class="w-full px-3 py-2 border-2 rounded-lg text-sm" value="Amazing" oninput="updatePreview()">
-                    
-                    <label for="titleAccent" class="block text-xs font-medium text-gray-600">Title Accent (Thailand)</label>
-                    <input type="text" id="titleAccent" class="w-full px-3 py-2 border-2 rounded-lg text-sm" value="Thailand" oninput="updatePreview()">
-
-                    <!-- NEW: Editable Description Textarea -->
-                    <label for="descriptionText" class="block text-xs font-medium text-gray-600">Description Text (Editable)</label>
-                    <textarea 
-                        id="descriptionText" 
-                        rows="3" 
-                        class="w-full px-3 py-2 border-2 rounded-lg text-sm resize-none" 
-                        oninput="updatePreview()"
-                    >Embark on the ultimate 10-day motorcycle odyssey through the legendary Golden Triangle. Conquer 1,864 curves, witness misty mountains, and experience the thrill of the R1148 dream road.</textarea>
-                </div>
-
-                <!-- NEW: Copy HTML Button -->
-                <button 
-                    id="copyCodeBtn" 
-                    onclick="copyGeneratedCode()" 
-                    class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-200 shadow-lg text-lg flex items-center justify-center space-x-2"
-                >
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M12 4.5v15M16 10H8"></path></svg>
-                    <span>Copy Generated HTML Code</span>
-                </button>
+            <!-- Zaui Embed Code -->
+            <div class="p-4 border border-red-200 bg-red-50 rounded-lg mb-4">
+                <label for="zauiEmbed" class="text-red-700 font-semibold text-sm mb-1">
+                    Zaui Iframe Source URL *
+                </label>
+                <input 
+                    type="url" 
+                    id="zauiEmbed" 
+                    class="border-red-300 text-sm focus:border-red-500 focus:ring-red-500 w-full rounded-md mt-1"
+                    value="https://bigbiketours.zaui.net/booking/web/#/default/widget/activity/14??embedStyle=embeddedframe"
+                />
+                <p class="text-xs text-red-500 mt-1">Click 'Apply Changes' after updating this URL.</p>
             </div>
+
+            <!-- Content Inputs -->
+            <div class="p-4 border border-gray-200 bg-white rounded-lg mb-6 shadow-inner">
+                <h3 class="text-sm font-bold text-gray-700 mb-3">Preview Content Inputs</h3>
+                
+                <label for="bgImageUrl" class="text-xs">Background Image URL</label>
+                <input type="url" id="bgImageUrl" class="text-sm" value="https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?q=80&w=2039&auto=format&fit=crop" placeholder="Image URL">
+
+                <label for="mainTitle" class="text-xs">Main Title</label>
+                <input type="text" id="mainTitle" class="text-sm" value="Amazing">
+                
+                <label for="titleAccent" class="text-xs">Title Accent</label>
+                <input type="text" id="titleAccent" class="text-sm" value="Thailand">
+
+                <label for="descriptionText" class="text-xs">Description Text</label>
+                <textarea id="descriptionText" rows="3" class="text-sm resize-none">Embark on the ultimate 10-day motorcycle odyssey through the legendary Golden Triangle. Conquer 1,864 curves, witness misty mountains, and experience the thrill of the R1148 dream road.</textarea>
+                
+                <label for="additionalInfoText" class="text-xs">Additional Footer Information</label>
+                <textarea id="additionalInfoText" rows="2" class="text-sm resize-none">Prices are quoted in USD and subject to change based on exchange rates. Contact us for group rates.</textarea>
+            </div>
+
+            <!-- Action Buttons -->
+            <button 
+                onclick="updatePreview()" 
+                class="bg-green-500 hover:bg-green-600 text-white py-3 px-4 rounded-lg mb-3 shadow-md w-full"
+            >
+                Apply Changes to Preview
+            </button>
+            
+            <button 
+                onclick="copyWidgetCode()" 
+                class="bg-indigo-600 hover:bg-indigo-700 text-white py-3 px-4 rounded-lg shadow-md w-full"
+            >
+                Copy Widget Code (HTML)
+            </button>
+            
+            <!-- Copy Message Confirmation -->
+            <div id="copyMessage" class="mt-4 p-2 bg-indigo-100 text-indigo-700 rounded-lg text-center text-sm hidden transition duration-300">
+                Code copied to clipboard!
+            </div>
+
         </div>
 
-        <!-- BOTTOM: LIVE PREVIEW CONTAINER (Zaui Widget Area) -->
-        <div class="w-full preview-area bg-gray-100 flex-shrink-0 relative overflow-hidden">
-            <div id="previewContainer" class="w-full h-full flex flex-col lg:flex-row bg-white overflow-hidden">
+        <!-- RIGHT SIDE: LIVE PREVIEW CONTAINER -->
+        <div class="preview-area">
+            <div id="previewContainer" class="flex flex-col lg:flex-row w-full h-full bg-gray-100">
 
                 <!-- LEFT SIDEBAR: Simplified Info Panel -->
-                <div id="infoPanel" class="hidden lg:flex lg:w-1/2 bg-slate-900 text-white relative flex-col justify-between p-16 h-full z-10 overflow-y-auto no-scrollbar">
+                <div id="infoPanel" class="flex-1 p-8 relative hidden lg:flex flex-col justify-between text-white overflow-hidden">
+                    
+                    <!-- Background Image & Overlay -->
                     <div class="absolute inset-0 z-0">
-                        <img id="previewBgImage" src="https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?q=80&w=2039&auto=format&fit=crop" 
+                        <img id="previewBgImage" 
+                            class="w-full h-full object-cover opacity-30 mix-blend-overlay"
+                            src="https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?q=80&w=2039&auto=format&fit=crop" 
                             onerror="this.src='https://placehold.co/1200x800/1e293b/FFFFFF?text=Background+Image+Missing';"
-                            alt="Background Scenery" 
-                            class="w-full h-full object-cover opacity-30 mix-blend-overlay">
-                        <div class="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-900/80 to-slate-900/60"></div>
+                            alt="Background Scenery">
+                        <div class="absolute inset-0 bg-gray-900 bg-opacity-70"></div>
                     </div>
 
-                    <div class="relative z-10 h-full flex flex-col justify-between space-y-8">
+                    <!-- Content -->
+                    <div class="relative z-10 flex flex-col justify-between h-full">
                         <div>
-                            <h1 class="text-5xl xl:text-7xl font-bold leading-tight mb-6 drop-shadow-xl">
+                            <h1 class="text-5xl font-extrabold mb-4 text-shadow-lg leading-tight">
                                 <span id="previewMainTitle">Amazing</span> <br>
-                                <span class="text-transparent bg-clip-text main-title-accent" id="previewTitleAccent">Thailand</span>
+                                <span class="bg-clip-text text-transparent bg-gradient-to-r from-amber-300 to-amber-500" id="previewTitleAccent">Thailand</span>
                             </h1>
-                            <p id="previewDescription" class="text-lg text-slate-300 max-w-xl leading-relaxed mb-10 font-light border-l-8 pl-6" style="border-color: var(--primary-color);">
+                            <p id="previewDescription" class="text-lg text-gray-300 max-w-lg leading-relaxed border-l-4 border-amber-500 pl-4">
                                 Embark on the ultimate 10-day motorcycle odyssey through the legendary Golden Triangle. Conquer 1,864 curves, witness misty mountains, and experience the thrill of the R1148 dream road.
                             </p>
+                        </div>
+                        
+                        <!-- Additional Information Display -->
+                        <div id="previewAdditionalInfo" class="text-xs text-gray-400 border-t border-gray-700 pt-4 mt-6">
+                            Prices are quoted in USD and subject to change based on exchange rates. Contact us for group rates.
                         </div>
                     </div>
                 </div>
                 
-                <!-- RIGHT SIDE: Booking Interface Container (Zaui Widget Location) -->
-                <div class="w-full lg:w-1/2 bg-slate-50 relative flex flex-col h-full overflow-hidden">
-                    <div class="relative z-10 p-4 lg:p-8 flex flex-col items-center justify-center h-full">
+                <!-- RIGHT SIDE: Booking Interface Container -->
+                <div class="w-full lg:w-1/2 p-4 lg:p-8 flex items-center justify-center">
+                    <div class="w-full bg-white rounded-xl shadow-2xl overflow-hidden flex flex-col widget-iframe-wrapper">
                         
-                        <!-- THE FRAME: Full Height Card -->
-                        <div class="w-full h-full max-h-[90vh] bg-white rounded-2xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] border border-gray-200/60 overflow-hidden flex flex-col mb-4">
-                            
-                            <!-- Frame Header (Fixed) -->
-                            <div class="bg-white/80 backdrop-blur-md px-6 py-4 border-b border-gray-100 flex justify-between items-center z-20 flex-shrink-0">
-                                <div>
-                                    <h2 class="text-sm font-bold text-slate-900 tracking-tight">Select Travel Dates</h2>
-                                </div>
-                            </div>
+                        <!-- Frame Header (Fixed) -->
+                        <div class="bg-white p-4 border-b border-gray-200 flex-shrink-0">
+                            <h2 class="text-sm font-semibold text-gray-800">Select Travel Dates</h2>
+                        </div>
 
-                            <!-- Frame Content (Widget - SCROLLABLE) -->
-                            <div class="flex-1 relative bg-white w-full overflow-hidden">
-                                <!-- Zaui Iframe: This is the Zaui Widget -->
-                                <iframe 
-                                    id="zauiWidgetIframe" 
-                                    class="w-full h-full absolute inset-0 z-10" 
-                                    title="Activity Widget" 
-                                    src="https://bigbiketours.zaui.net/booking/web/#/default/widget/activity/14??embedStyle=embeddedframe" 
-                                    frameborder="0" 
-                                    scrolling="yes">
-                                </iframe>
-                            </div>
+                        <!-- Frame Content (Widget - SCROLLABLE) -->
+                        <div class="flex-1 relative w-full overflow-hidden">
+                            <!-- Zaui Iframe: This is the Zaui Widget -->
+                            <iframe 
+                                id="zauiWidgetIframe" 
+                                class="w-full h-full absolute inset-0 z-10" 
+                                title="Activity Widget" 
+                                src="https://bigbiketours.zaui.net/booking/web/#/default/widget/activity/14??embedStyle=embeddedframe" 
+                                frameborder="0" 
+                                scrolling="yes">
+                            </iframe>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
     </div>
 
-
     <script>
-        function updatePreview() {
-            // Get user input values
-            const mainTitle = document.getElementById('mainTitle').value;
-            const titleAccent = document.getElementById('titleAccent').value;
-            const bgImageUrl = document.getElementById('bgImageUrl').value;
-            const zauiEmbed = document.getElementById('zauiEmbed').value;
-            const descText = document.getElementById('descriptionText').value; // NEW: Read description
-
-            // 1. Update the Zaui iframe source
-            const iframe = document.getElementById('zauiWidgetIframe');
-            if (iframe) iframe.src = zauiEmbed;
+        // Use document.execCommand('copy') for guaranteed clipboard access in iframes
+        function copyTextToClipboard(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed'; // Ensure it's off-screen
+            textarea.style.left = '-9999px';
+            document.body.appendChild(textarea);
+            textarea.select();
             
-            // 2. Update background image
-            const bgImg = document.getElementById('previewBgImage');
-            if (bgImg) bgImg.src = bgImageUrl;
-            
-            // 3. Update main text elements
-            const mainTitleSpan = document.getElementById('previewMainTitle');
-            if (mainTitleSpan) mainTitleSpan.textContent = mainTitle;
-            
-            const titleAccentSpan = document.getElementById('previewTitleAccent');
-            if (titleAccentSpan) titleAccentSpan.textContent = titleAccent;
-
-            // 4. NEW: Update description text
-            const descElement = document.getElementById('previewDescription');
-            if (descElement) descElement.textContent = descText;
+            try {
+                document.execCommand('copy');
+                return true;
+            } catch (err) {
+                console.error('Failed to copy text', err);
+                return false;
+            } finally {
+                document.body.removeChild(textarea);
+            }
         }
-        
-        // Helper function to generate the complete, embeddable HTML string
-        function getGeneratedHTML() {
+
+        function generateWidgetCode() {
+            const iframeSrc = document.getElementById('zauiEmbed').value;
+            const bgImg = document.getElementById('bgImageUrl').value;
             const mainTitle = document.getElementById('mainTitle').value;
-            const titleAccent = document.getElementById('titleAccent').value;
-            const bgImageUrl = document.getElementById('bgImageUrl').value;
-            const zauiEmbed = document.getElementById('zauiEmbed').value;
-            const descText = document.getElementById('descriptionText').value;
-            
-            // NOTE: This must be a single, complete HTML document string
-            return `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${mainTitle} ${titleAccent} Booking Component</title>
-    <!-- Use Tailwind CDN for the generated component -->
-    <script src="https://cdn.tailwindcss.com"></script>
+            const accent = document.getElementById('titleAccent').value;
+            const description = document.getElementById('descriptionText').value.replace(/\n/g, '<br>');
+            const info = document.getElementById('additionalInfoText').value.replace(/\n/g, '<br>');
+            const infoDisplay = info.trim() ? 'block' : 'none';
+
+            // --- The final, clean, embeddable HTML structure ---
+            return `
+<!-- Start Zaui Booking Component -->
+<div style="font-family: sans-serif; display: flex; flex-direction: column; width: 100%; max-width: 1200px; margin: 0 auto; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1); background-color: #fff;">
     <style>
-        /* Embedded CSS from Designer */
-        body { margin: 0; padding: 0; min-height: 100vh; font-family: sans-serif; }
-        :root { --p: #F59E0B; --pl: #FFDDAA; }
-        .acc { background-image: linear-gradient(to right, var(--pl), var(--p)); }
-        .h-full { height: 100%; } .w-full { width: 100%; } .abs { position: absolute; } .ins { inset: 0; }
-        /* Responsive layout */
-        .flex-lg-row { display: flex; flex-direction: column; }
-        @media (min-width: 1024px) { .flex-lg-row { flex-direction: row; } }
-    </style>
-</head>
-<body class="w-full h-full bg-slate-50">
-    <div class="w-full h-screen flex-lg-row">
+        .widget-container { display: flex; flex-direction: column; min-height: 600px; }
+        .info-panel { padding: 3rem 2rem; color: #fff; position: relative; flex: 1; display: none; }
+        .info-panel-lg { display: flex; flex-direction: column; justify-content: space-between; height: 100%; position: relative; z-index: 1; }
+        .widget-frame { padding: 1.5rem; background-color: #f8fafc; flex: 1; display: flex; align-items: center; justify-content: center; }
+        .widget-card { width: 100%; height: 100%; max-height: 80vh; background-color: white; border-radius: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); overflow: hidden; display: flex; flex-direction: column; }
+        .widget-iframe-container { flex: 1; position: relative; }
         
-        <!-- LEFT SIDEBAR: Info Panel -->
-        <div class="hidden lg:flex w-1/2 bg-slate-900 text-white relative flex-col justify-between p-16 h-full overflow-y-auto">
-            <div class="abs ins z-0">
-                <img src="${bgImageUrl}" class="w-full h-full object-cover opacity-30">
-                <div class="abs ins bg-gradient-to-br from-slate-900 via-slate-900/80 to-slate-900/60"></div>
+        @media (min-width: 1024px) {
+            .widget-container { flex-direction: row; }
+            .info-panel { display: block; flex: 1; }
+            .widget-frame { flex: 1; }
+        }
+    </style>
+
+    <div class="widget-container">
+        <!-- Info Panel (Left Side on Desktop) -->
+        <div class="info-panel" style="background-color: #0f172a;">
+            <div style="position: absolute; inset: 0; z-index: 0;">
+                <img src="${bgImg}" 
+                    onerror="this.style.display='none';"
+                    alt="Background Scenery" 
+                    style="width: 100%; height: 100%; object-fit: cover; opacity: 0.3; filter: brightness(0.6);">
+                <div style="position: absolute; inset: 0; background-color: rgba(15, 23, 42, 0.7);"></div>
             </div>
-            <div class="relative z-10">
-                <h1 class="text-5xl font-bold mb-6 drop-shadow-xl">
-                    <span>${mainTitle}</span> <br>
-                    <span class="text-transparent bg-clip-text acc">${titleAccent}</span>
-                </h1>
-                <p class="text-lg text-slate-300 max-w-xl border-l-8 pl-6" style="border-color: var(--p);">
-                    ${descText}
-                </p>
+
+            <div class="info-panel-lg">
+                <div>
+                    <h1 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 1rem; line-height: 1.1;">
+                        ${mainTitle} <br>
+                        <span style="background-image: linear-gradient(to right, #FFDDAA, #F59E0B); -webkit-background-clip: text; background-clip: text; color: transparent;">${accent}</span>
+                    </h1>
+                    <p style="font-size: 1rem; color: #d1d5db; max-width: 28rem; line-height: 1.6; border-left: 4px solid #F59E0B; padding-left: 1rem;">
+                        ${description}
+                    </p>
+                </div>
+                
+                <div style="font-size: 0.75rem; color: #94a3b8; border-top: 1px solid #334155; padding-top: 1rem; margin-top: 1rem; display: ${infoDisplay};">
+                    ${info}
+                </div>
             </div>
         </div>
-        
-        <!-- RIGHT SIDE: ZAUI WIDGET -->
-        <div class="w-full lg:w-1/2 bg-slate-50 relative flex flex-col h-full">
-            <div class="p-8 flex flex-col items-center justify-center h-full">
-                <div class="w-full h-full max-h-[90vh] bg-white rounded-2xl shadow-xl border border-gray-200/60 overflow-hidden flex flex-col">
-                    <div class="bg-white/80 px-6 py-4 border-b border-gray-100 flex-shrink-0">
-                        <h2 class="text-sm font-bold text-slate-900">Select Travel Dates</h2>
-                    </div>
-                    <div class="flex-1 relative bg-white w-full overflow-hidden">
-                        <iframe id="zauiWidgetIframe" class="w-full h-full abs ins z-10" title="Activity Widget" src="${zauiEmbed}" frameborder="0" scrolling="yes"></iframe>
-                    </div>
+
+        <!-- Booking Widget Frame (Right Side) -->
+        <div class="widget-frame">
+            <div class="widget-card">
+                <div style="background-color: #f7f7f7; padding: 1rem 1.5rem; border-bottom: 1px solid #e5e7eb; flex-shrink: 0;">
+                    <h2 style="font-size: 0.875rem; font-weight: bold; color: #1e293b;">Select Travel Dates</h2>
+                </div>
+
+                <div class="widget-iframe-container">
+                    <iframe 
+                        style="width: 100%; height: 100%; position: absolute; inset: 0;" 
+                        title="Booking Widget" 
+                        src="${iframeSrc}" 
+                        frameborder="0" 
+                        scrolling="yes">
+                    </iframe>
                 </div>
             </div>
         </div>
     </div>
-</body>
-</html>`;
+</div>
+<!-- End Zaui Booking Component -->`.trim();
         }
 
-        function copyGeneratedCode() {
-            const htmlToCopy = getGeneratedHTML();
+        function copyWidgetCode() {
+            const code = generateWidgetCode();
+            const message = document.getElementById('copyMessage');
 
-            const textarea = document.createElement('textarea');
-            textarea.value = htmlToCopy;
-            document.body.appendChild(textarea);
-            textarea.select();
-            
-            let message = 'Code copied to clipboard! (Check console for confirmation)';
-            try {
-                if (!document.execCommand('copy')) {
-                    message = 'Copy failed. Please try manually.';
-                }
-            } catch (err) {
-                message = 'Copy failed. Please try manually.';
+            if (copyTextToClipboard(code)) {
+                message.textContent = 'Code copied to clipboard!';
+                message.classList.remove('hidden');
+                message.classList.add('opacity-100');
+                
+                // Hide message after 3 seconds
+                setTimeout(() => {
+                    message.classList.add('hidden');
+                    message.classList.remove('opacity-100');
+                }, 3000);
+            } else {
+                message.textContent = 'Copy failed. Browser access denied.';
+                message.classList.remove('hidden');
+                message.classList.add('bg-red-100', 'text-red-700');
             }
-            console.log(message);
-            document.body.removeChild(textarea);
         }
 
-        // Run update on initial load
-        updatePreview();
+        function updatePreview() {
+            const m = document.getElementById('mainTitle').value;
+            const t = document.getElementById('titleAccent').value;
+            const b = document.getElementById('bgImageUrl').value;
+            const z = document.getElementById('zauiEmbed').value;
+            const d = document.getElementById('descriptionText').value;
+            const a = document.getElementById('additionalInfoText').value; 
+
+            // Update Iframe source
+            const f = document.getElementById('zauiWidgetIframe');
+            if (f) { f.src = z; f.scrolling = "yes"; }
+            
+            // Update Preview Elements
+            const i = document.getElementById('previewBgImage');
+            if (i) i.src = b;
+            
+            const ms = document.getElementById('previewMainTitle');
+            if (ms) ms.textContent = m;
+            
+            const ta = document.getElementById('previewTitleAccent');
+            if (ta) ta.textContent = t;
+
+            const de = document.getElementById('previewDescription');
+            if (de) de.textContent = d;
+
+            const ae = document.getElementById('previewAdditionalInfo');
+            if (ae) {
+                ae.textContent = a;
+                ae.style.display = a.trim() ? 'block' : 'none';
+            }
+        }
+        
+        // Initial load of the preview
+        window.onload = updatePreview;
     </script>
+
 </body>
 </html>
