@@ -7,34 +7,24 @@
     <!-- Load Tailwind CSS for modern, responsive styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Base styles: Center the designer app content on the screen */
+        /* Custom styles to handle layout priority and ensure full height */
         body {
             font-family: 'Inter', sans-serif;
             min-height: 100vh;
             display: flex;
-            flex-direction: column;
-            align-items: center; 
-            padding: 2rem 0;
-            background-color: #f3f4f6; /* Soft background for the designer */
         }
-        
-        /* Main container centered and styled as a large card */
+        /* Flex container stacked vertically for Control Panel (top) and Preview (bottom) */
         .designer-container {
-            width: 100%;
-            max-width: 1100px; 
             display: flex;
             flex-direction: column; 
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2);
-            border-radius: 1.5rem;
-            overflow: hidden;
-            background-color: #fff;
+            width: 100%;
         }
 
-        /* Control Panel styles */
+        /* Control Panel scrolling area */
         .control-panel {
             overflow-y: auto;
             flex-shrink: 0;
-            padding: 2.5rem 3rem; 
+            max-height: 100vh; 
         }
 
         /* Preview Area ensures the preview content uses remaining height */
@@ -42,185 +32,162 @@
             flex-grow: 1;
             overflow: hidden;
             display: flex;
-            /* CRITICAL: Must maintain the height used in generated code + padding */
-            min-height: 1300px; 
-            border-top: 1px solid #e5e7eb; /* Soft border */
-            background-color: #f9fafb;
+            min-height: 900px; /* Increased minimum height for the designer preview */
+            border-top: 8px solid #cbd5e1; /* Visual separation from the control panel */
         }
 
         /* Input/Button common styles (resetting browser defaults) */
         input:not([type="color"]), textarea, button {
             transition: all 0.2s;
         }
+        
+        /* Iframe wrapper for fixed height control in the designer preview */
+        .widget-iframe-wrapper {
+            height: 90%; 
+            max-height: 90vh;
+        }
 
         /* Designer Preview Specific Stacking */
         #infoPanel {
             flex-shrink: 0;
-            /* FIX 1: Explicitly set height in the designer preview so the flex-grow of the widget container works */
-            height: 300px; 
-            min-height: 300px;
+            max-height: 300px; /* Constrain info panel height in designer preview */
             width: 100%;
             display: flex;
         }
         #previewContainer {
-            /* Forces vertical stacking in the designer */
+            /* Now forces vertical stacking on all screen sizes in the designer */
             flex-direction: column;
-            width: 100%;
-            border-radius: 0;
-            /* FIX 2: Ensure the internal container takes up all available vertical space */
-            height: 100%; 
         }
     </style>
 </head>
-<body>
+<body class="bg-gray-50">
 
     <div class="designer-container">
 
         <!-- TOP: CONTROL PANEL -->
-        <div class="control-panel">
-            <h1 class="text-3xl font-extrabold text-gray-900 mb-2">
+        <div class="control-panel w-full lg:w-full bg-white p-6 shadow-2xl">
+            <h1 class="text-2xl font-extrabold text-gray-900 mb-1">
                 <span class="text-indigo-600">Widget</span> Designer
             </h1>
-            <p class="text-base text-gray-500 mb-6">Configure the component, see the live preview below, and copy the final code.</p>
+            <p class="text-sm text-gray-500 mb-6">Configure the component, see the live preview below, and copy the final code.</p>
 
             <!-- Zaui Embed Code -->
-            <div class="p-5 border border-red-300 bg-red-100 rounded-xl mb-6 shadow-md">
-                <label for="zauiEmbed" class="text-red-800 font-bold text-sm mb-1">
+            <div class="p-4 border border-red-200 bg-red-50 rounded-lg mb-4">
+                <label for="zauiEmbed" class="text-red-700 font-semibold text-sm mb-1">
                     Zaui Iframe Source URL *
                 </label>
                 <input 
                     type="url" 
                     id="zauiEmbed" 
-                    class="border-red-400 text-base focus:ring-red-500 focus:border-red-500 w-full rounded-lg mt-1 p-3 shadow-inner"
+                    class="border-red-300 text-sm focus:border-red-500 focus:ring-red-500 w-full rounded-lg mt-1 p-2"
                     value="https://bigbiketours.zaui.net/booking/web/#/default/widget/activity/14??embedStyle=embeddedframe"
                 />
-                <p class="text-xs text-red-600 mt-2">Click 'Apply Changes to Preview' after updating this URL.</p>
+                <p class="text-xs text-red-500 mt-1">Click 'Apply Changes to Preview' after updating this URL.</p>
             </div>
 
             <!-- Content Inputs -->
-            <div class="p-6 border border-gray-300 bg-gray-50 rounded-xl mb-8 shadow-lg space-y-5">
-                <h3 class="text-lg font-extrabold text-gray-800 mb-4 border-b pb-2 border-gray-300">Widget Content Configuration</h3>
+            <div class="p-5 border border-gray-200 bg-gray-50 rounded-xl mb-6 shadow-lg">
+                <h3 class="text-base font-extrabold text-gray-800 mb-4 border-b pb-2 border-gray-300">Widget Content Preview</h3>
 
-                <!-- Font Size Controls -->
-                <div class="pt-2 border-t border-gray-300 space-y-4">
-                    <h4 class="text-sm font-bold text-indigo-700">Font Size Customization (e.g., 4rem, 24px)</h4>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
-                            <label for="mainTitleFontSize" class="text-xs font-medium text-gray-600">Main Title Size</label>
-                            <input type="text" id="mainTitleFontSize" class="text-base w-full p-3 border border-indigo-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" value="3rem">
-                        </div>
-                        <div>
-                            <label for="accentTitleFontSize" class="text-xs font-medium text-gray-600">Accent Title Size</label>
-                            <input type="text" id="accentTitleFontSize" class="text-base w-full p-3 border border-indigo-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" value="3rem">
-                        </div>
-                        <div>
-                            <label for="descriptionFontSize" class="text-xs font-medium text-gray-600">Description Text Size</label>
-                            <input type="text" id="descriptionFontSize" class="text-base w-full p-3 border border-indigo-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" value="1.125rem">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Text Content Fields -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-gray-300">
+                <div class="space-y-4">
+                    <!-- Title Group -->
                     <div>
-                        <label for="mainTitle" class="text-xs font-medium text-gray-600">Main Title Text</label>
-                        <input type="text" id="mainTitle" class="text-base w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" value="Amazing">
+                        <label for="mainTitle" class="text-xs font-medium text-gray-600">Main Title</label>
+                        <input type="text" id="mainTitle" class="text-sm w-full p-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500" value="Amazing">
                     </div>
                     
                     <div>
-                        <label for="titleAccent" class="text-xs font-medium text-gray-600">Title Accent Text</label>
-                        <input type="text" id="titleAccent" class="text-base w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" value="Thailand">
+                        <label for="titleAccent" class="text-xs font-medium text-gray-600">Title Accent</label>
+                        <input type="text" id="titleAccent" class="text-sm w-full p-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500" value="Thailand">
                     </div>
-                </div>
 
-                <!-- Image Field -->
-                <div>
-                    <label for="bgImageUrl" class="text-xs font-medium text-gray-600">Background Image URL</label>
-                    <input type="url" id="bgImageUrl" class="text-base w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" value="https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?q=80&w=2039&auto=format&fit=crop" placeholder="Image URL">
-                </div>
+                    <!-- Image Group -->
+                    <div class="pt-2 border-t border-gray-200">
+                        <label for="bgImageUrl" class="text-xs font-medium text-gray-600">Background Image URL</label>
+                        <input type="url" id="bgImageUrl" class="text-sm w-full p-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500" value="https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?q=80&w=2039&auto=format&fit=crop" placeholder="Image URL">
+                    </div>
 
-                <!-- Description Field -->
-                <div>
-                    <label for="descriptionText" class="text-xs font-medium text-gray-600">Description Text</label>
-                    <textarea id="descriptionText" rows="3" class="text-base w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 resize-none shadow-sm">Embark on the ultimate 10-day motorcycle odyssey through the legendary Golden Triangle. Conquer 1,864 curves, witness misty mountains, and experience the thrill of the R1148 dream road.</textarea>
-                </div>
-                
-                <!-- Footer Info Field -->
-                <div>
-                    <label for="additionalInfoText" class="text-xs font-medium text-gray-600">Additional Footer Information (Optional)</label>
-                    <textarea id="additionalInfoText" rows="2" class="text-base w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 resize-none shadow-sm">Prices are quoted in USD and subject to change based on exchange rates. Contact us for group rates.</textarea>
+                    <!-- Description Group -->
+                    <div class="pt-2 border-t border-gray-200">
+                        <label for="descriptionText" class="text-xs font-medium text-gray-600">Description Text</label>
+                        <textarea id="descriptionText" rows="3" class="text-sm w-full p-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 resize-none">Embark on the ultimate 10-day motorcycle odyssey through the legendary Golden Triangle. Conquer 1,864 curves, witness misty mountains, and experience the thrill of the R1148 dream road.</textarea>
+                    </div>
+                    
+                    <!-- Footer Info Group -->
+                    <div>
+                        <label for="additionalInfoText" class="text-xs font-medium text-gray-600">Additional Footer Information</label>
+                        <textarea id="additionalInfoText" rows="2" class="text-sm w-full p-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 resize-none">Prices are quoted in USD and subject to change based on exchange rates. Contact us for group rates.</textarea>
+                    </div>
                 </div>
             </div>
 
             <!-- Action Buttons -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <button 
-                    onclick="updatePreview()" 
-                    class="bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-xl mb-0 shadow-lg transform hover:scale-[1.01] transition duration-150 font-bold"
-                >
-                    Apply Changes to Preview
-                </button>
-                
-                <button 
-                    onclick="copyWidgetCode()" 
-                    class="bg-indigo-600 hover:bg-indigo-700 text-white py-3 px-4 rounded-xl shadow-lg transform hover:scale-[1.01] transition duration-150 font-bold"
-                >
-                    Copy Widget Code (HTML)
-                </button>
-            </div>
+            <button 
+                onclick="updatePreview()" 
+                class="bg-green-500 hover:bg-green-600 text-white py-3 px-4 rounded-lg mb-3 shadow-md w-full"
+            >
+                Apply Changes to Preview
+            </button>
+            
+            <button 
+                onclick="copyWidgetCode()" 
+                class="bg-indigo-600 hover:bg-indigo-700 text-white py-3 px-4 rounded-lg shadow-md w-full"
+            >
+                Copy Widget Code (HTML)
+            </button>
             
             <!-- Copy Message Confirmation -->
-            <div id="copyMessage" class="mt-4 p-3 bg-indigo-100 text-indigo-700 rounded-lg text-center text-sm hidden transition duration-300 font-semibold">
+            <div id="copyMessage" class="mt-4 p-2 bg-indigo-100 text-indigo-700 rounded-lg text-center text-sm hidden transition duration-300">
                 Code copied to clipboard!
             </div>
+
         </div>
 
         <!-- BOTTOM: LIVE PREVIEW CONTAINER -->
         <div class="preview-area">
-            <!-- CRITICAL FIX: Added h-full to this container to ensure it fills the preview-area's min-height -->
             <div id="previewContainer" class="flex flex-col w-full h-full bg-gray-100">
 
                 <!-- TOP SECTION: Simplified Info Panel -->
-                <div id="infoPanel" class="flex-shrink-0 w-full p-8 relative flex flex-col justify-between text-white overflow-hidden" style="background-color: #0f172a;">
+                <!-- Removed 'hidden lg:flex' and added w-full p-8, constrained by CSS max-height -->
+                <div id="infoPanel" class="flex-shrink-0 w-full p-8 relative flex flex-col justify-between text-white overflow-hidden">
                     
                     <!-- Background Image & Overlay -->
                     <div class="absolute inset-0 z-0">
                         <img id="previewBgImage" 
-                            class="w-full h-full object-cover opacity-70"
+                            class="w-full h-full object-cover opacity-50 mix-blend-overlay"
                             src="https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?q=80&w=2039&auto=format&fit=crop" 
                             onerror="this.src='https://placehold.co/1200x800/1e293b/FFFFFF?text=Background+Image+Missing';"
                             alt="Background Scenery">
-                        <!-- Darkened overlay for better image visibility and text contrast -->
-                        <div class="absolute inset-0 bg-gray-900 bg-opacity-70"></div>
+                        <div class="absolute inset-0 bg-gray-900 bg-opacity-50"></div>
                     </div>
 
                     <!-- Content -->
                     <div class="relative z-10 flex flex-col justify-between h-full">
-                        <div class="max-w-4xl">
-                            <h1 id="previewTitleContainer" class="text-shadow-lg leading-tight mb-3" style="font-size: 3rem; font-weight: 800;">
+                        <div>
+                            <h1 class="text-4xl font-extrabold mb-2 text-shadow-lg leading-tight">
                                 <span id="previewMainTitle">Amazing</span> <br>
                                 <span class="bg-clip-text text-transparent bg-gradient-to-r from-amber-300 to-amber-500" id="previewTitleAccent">Thailand</span>
                             </h1>
-                            <p id="previewDescription" class="text-lg text-gray-300 max-w-2xl leading-relaxed border-l-4 border-amber-500 pl-4">
+                            <p id="previewDescription" class="text-base text-gray-300 max-w-lg leading-relaxed border-l-4 border-amber-500 pl-4">
                                 Embark on the ultimate 10-day motorcycle odyssey through the legendary Golden Triangle. Conquer 1,864 curves, witness misty mountains, and experience the thrill of the R1148 dream road.
                             </p>
                         </div>
                         
-                        <!-- Additional Information Display (FIXED READABILITY) -->
-                        <div id="previewAdditionalInfo" class="text-sm text-gray-200 border-t border-gray-700 pt-4 mt-6">
+                        <!-- Additional Information Display -->
+                        <div id="previewAdditionalInfo" class="text-xs text-gray-400 border-t border-gray-700 pt-4 mt-4">
                             Prices are quoted in USD and subject to change based on exchange rates. Contact us for group rates.
                         </div>
                     </div>
                 </div>
                 
-                <!-- BOTTOM SECTION: Booking Interface Container (RESTORED VISIBILITY) -->
-                <!-- CRITICAL FIX: Removed the original flex-grow class which was redundant here and ensured the container height is governed by flex logic -->
-                <div class="w-full flex-grow p-4 lg:p-8 flex items-center justify-center"> 
-                    <div class="w-full bg-white rounded-xl shadow-2xl overflow-hidden flex flex-col h-full">
+                <!-- BOTTOM SECTION: Booking Interface Container -->
+                <!-- Use flex-grow to fill remaining vertical space -->
+                <div class="w-full flex-grow p-4 lg:p-8 flex items-center justify-center">
+                    <div class="w-full bg-white rounded-xl shadow-2xl overflow-hidden flex flex-col widget-iframe-wrapper">
                         
                         <!-- Frame Header (Fixed) -->
                         <div class="bg-white p-4 border-b border-gray-200 flex-shrink-0">
-                            <h2 class="text-lg font-semibold text-gray-800">Booking & Availability</h2>
+                            <h2 class="text-sm font-semibold text-gray-800">Select Travel Dates</h2>
                         </div>
 
                         <!-- Frame Content (Widget - SCROLLABLE) -->
@@ -246,7 +213,7 @@
         function copyTextToClipboard(text) {
             const textarea = document.createElement('textarea');
             textarea.value = text;
-            textarea.style.position = 'fixed'; 
+            textarea.style.position = 'fixed'; // Ensure it's off-screen
             textarea.style.left = '-9999px';
             document.body.appendChild(textarea);
             textarea.select();
@@ -271,44 +238,31 @@
             const info = document.getElementById('additionalInfoText').value.replace(/\n/g, '<br>');
             const infoDisplay = info.trim() ? 'block' : 'none';
             
-            // Read font size inputs
-            const mainTitleSize = document.getElementById('mainTitleFontSize').value || '3rem';
-            const accentTitleSize = document.getElementById('accentTitleFontSize').value || '3rem';
-            const descriptionSize = document.getElementById('descriptionFontSize').value || '1.125rem';
-            
             // Fixed height for reliable embedding and minimized scrolling
-            const fixedHeight = '1300px'; 
+            const fixedHeight = '900px';
             const topPanelHeight = '300px';
-            
-            // Footer Readability Styles for generated code
-            const infoTextColor = '#f3f4f6'; 
-            const infoTextSize = '0.875rem'; 
-
-            // CRITICAL FIX: Calculate remaining height in pixels for the booking frame to ensure it shows up.
-            // 1300px (Total) - 300px (Top Panel) - 48px (Top/Bottom padding of the widget-frame) = 952px
-            // Let's keep it simple: 1300px (Total) - 300px (Top Panel) = 1000px height for the flex-grow area (which includes padding)
-            const bookingFrameHeight = '1000px'; 
+            const bottomFrameHeight = 'calc(900px - 300px)';
 
             // --- The final, clean, embeddable HTML structure (Fixed Height, Resilient CSS) ---
             return `
 <!-- Start Zaui Booking Component (Stacked Layout: Info on Top, Booking on Bottom) -->
-<div style="font-family: sans-serif; display: flex; flex-direction: column; width: 100%; height: ${fixedHeight}; max-width: 1200px; margin: 0 auto; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.2); background-color: #fff;">
+<div style="font-family: sans-serif; display: flex; flex-direction: column; width: 100%; height: ${fixedHeight}; margin: 0 auto; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1); background-color: #fff;">
     <style>
         .widget-container { 
             display: flex; 
             flex-direction: column; 
-            height: 100%; 
+            height: 100%; /* Use 100% of the parent fixed height */
         }
-        
         /* TOP PANEL: Fixed height for info section */
         .info-panel { 
-            padding: 2.5rem 2rem; 
+            padding: 2rem 1.5rem; 
             color: #fff; 
             position: relative; 
             flex-shrink: 0;
             display: flex; 
             box-sizing: border-box;
-            height: ${topPanelHeight}; /* Fixed height for external embed */
+            /* CRITICAL FIX: Set fixed height */
+            height: ${topPanelHeight};
             overflow: hidden; 
         }
         .info-panel-lg { 
@@ -319,40 +273,25 @@
             position: relative; 
             z-index: 1; 
         }
-        .info-panel-text {
-             /* FIX: Constrain text width on wide screens */
-             max-width: 800px;
-        }
-
         /* BOTTOM FRAME: Takes remaining space */
         .widget-frame { 
             padding: 1.5rem; 
-            background-color: #f9fafb; 
+            background-color: #f8fafc; 
+            flex-grow: 1; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
-            /* CRITICAL FIX: Use fixed pixel height on the frame wrapper to ensure iframe is visible */
-            height: ${bookingFrameHeight}; 
         }
         .widget-card { 
             width: 100%; 
-            /* CRITICAL FIX: Use 100% of the calculated frame height */
             height: 100%; 
             background-color: white; 
             border-radius: 12px; 
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1); 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05); 
             overflow: hidden; 
             display: flex; 
             flex-direction: column; 
         }
-        .widget-header {
-            background-color: #fcfcfc; 
-            padding: 1rem 1.5rem; 
-            border-bottom: 1px solid #e0e0e0; 
-            flex-shrink: 0;
-        }
-        
-        /* CRITICAL: Ensure iframe container uses maximum available vertical space */
         .widget-iframe-container { 
             flex-grow: 1; 
             position: relative;
@@ -362,50 +301,39 @@
             height: 100%; 
             position: absolute; 
             inset: 0; 
-            scrolling: yes; /* Allow scrolling for content resilience */
         }
         
-        /* Mobile Fallback: Reduce fixed height on small screens */
-        @media (max-width: 768px) {
-            .widget-container { 
-                height: auto; 
-                min-height: 900px; 
-            }
-            .info-panel { 
-                height: 250px; 
-                padding: 1.5rem 1rem;
-            }
-            .widget-frame { 
-                height: auto; /* Remove fixed height on mobile, rely on min-height */
-                min-height: 650px; 
-            }
+        @media (max-width: 1023px) {
+            /* On mobile, let the entire container shrink to its natural content size */
+            .widget-container { min-height: 700px; height: auto; }
+            .info-panel { height: 250px; }
+            .widget-frame { min-height: 450px; }
         }
     </style>
 
     <div class="widget-container">
         <!-- Info Panel (Top Section) -->
-        <div class="info-panel" style="background-color: #1f2937;">
+        <div class="info-panel" style="background-color: #0f172a;">
             <div style="position: absolute; inset: 0; z-index: 0;">
                 <img src="${bgImg}" 
                     onerror="this.style.display='none';"
                     alt="Background Scenery" 
-                    style="width: 100%; height: 100%; object-fit: cover; opacity: 0.7;">
-                <!-- Overlay increased to 70% opacity for maximum text contrast -->
-                <div style="position: absolute; inset: 0; background-color: rgba(0, 0, 0, 0.7);"></div>
+                    style="width: 100%; height: 100%; object-fit: cover; opacity: 0.5; filter: brightness(0.6);">
+                <div style="position: absolute; inset: 0; background-color: rgba(15, 23, 42, 0.5);"></div>
             </div>
 
             <div class="info-panel-lg">
-                <div class="info-panel-text">
-                    <h1 style="font-size: ${mainTitleSize}; font-weight: 800; margin-bottom: 0.5rem; line-height: 1.1; text-shadow: 0 4px 6px rgba(0, 0, 0, 0.7);">
+                <div>
+                    <h1 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem; line-height: 1.1;">
                         ${mainTitle} <br>
-                        <span style="background-image: linear-gradient(to right, #FFDDAA, #F59E0B); -webkit-background-clip: text; background-clip: text; color: transparent; font-size: ${accentTitleSize};">${accent}</span>
+                        <span style="background-image: linear-gradient(to right, #FFDDAA, #F59E0B); -webkit-background-clip: text; background-clip: text; color: transparent;">${accent}</span>
                     </h1>
-                    <p style="font-size: ${descriptionSize}; color: #f3f4f6; max-width: 32rem; line-height: 1.6; border-left: 4px solid #F59E0B; padding-left: 1rem;">
+                    <p style="font-size: 1rem; color: #d1d5db; max-width: 28rem; line-height: 1.6; border-left: 4px solid #F59E0B; padding-left: 1rem;">
                         ${description}
                     </p>
                 </div>
                 
-                <div style="font-size: ${infoTextSize}; color: ${infoTextColor}; border-top: 1px solid #4b5563; padding-top: 1rem; margin-top: 1rem; display: ${infoDisplay};">
+                <div style="font-size: 0.75rem; color: #94a3b8; border-top: 1px solid #334155; padding-top: 1rem; margin-top: 1rem; display: ${infoDisplay};">
                     ${info}
                 </div>
             </div>
@@ -414,8 +342,8 @@
         <!-- Booking Widget Frame (Bottom Section) -->
         <div class="widget-frame">
             <div class="widget-card">
-                <div class="widget-header">
-                    <h2 style="font-size: 1rem; font-weight: bold; color: #374151;">Booking & Availability</h2>
+                <div style="background-color: #f7f7f7; padding: 1rem 1.5rem; border-bottom: 1px solid #e5e7eb; flex-shrink: 0;">
+                    <h2 style="font-size: 0.875rem; font-weight: bold; color: #1e293b;">Select Travel Dates</h2>
                 </div>
 
                 <div class="widget-iframe-container">
@@ -430,7 +358,7 @@
         </div>
     </div>
 </div>
-<!-- End Zaui Booking Component -->`.trim();
+<!-- End Zaui Booking Component (Fixed Height Resilient Embed) -->`.trim();
         }
 
         function copyWidgetCode() {
@@ -440,12 +368,12 @@
             if (copyTextToClipboard(code)) {
                 message.textContent = 'Code copied to clipboard!';
                 message.classList.remove('hidden');
-                message.classList.add('opacity-100', 'bg-indigo-100', 'text-indigo-700');
+                message.classList.add('opacity-100');
                 
                 // Hide message after 3 seconds
                 setTimeout(() => {
                     message.classList.add('hidden');
-                    message.classList.remove('opacity-100', 'bg-indigo-100', 'text-indigo-700');
+                    message.classList.remove('opacity-100');
                 }, 3000);
             } else {
                 message.textContent = 'Copy failed. Browser access denied.';
@@ -461,28 +389,15 @@
             const z = document.getElementById('zauiEmbed').value;
             const d = document.getElementById('descriptionText').value;
             const a = document.getElementById('additionalInfoText').value; 
-            
-            // Read font size inputs
-            const mainTitleSize = document.getElementById('mainTitleFontSize').value || '3rem';
-            const accentTitleSize = document.getElementById('accentTitleFontSize').value || '3rem';
-            const descriptionSize = document.getElementById('descriptionFontSize').value || '1.125rem';
-            
-            // Update Iframe source and enable scrolling in designer preview
+
+            // Update Iframe source
             const f = document.getElementById('zauiWidgetIframe');
-            if (f) { f.src = z; f.scrolling = "yes"; } 
+            if (f) { f.src = z; f.scrolling = "yes"; }
             
             // Update Preview Elements
             const i = document.getElementById('previewBgImage');
             if (i) i.src = b;
             
-            const titleContainer = document.getElementById('previewTitleContainer');
-            if (titleContainer) {
-                // Apply size to the container of the title spans
-                titleContainer.style.fontSize = mainTitleSize; 
-                // Apply size to the accent span explicitly if different, otherwise it inherits
-                document.getElementById('previewTitleAccent').style.fontSize = accentTitleSize;
-            }
-
             const ms = document.getElementById('previewMainTitle');
             if (ms) ms.textContent = m;
             
@@ -490,19 +405,12 @@
             if (ta) ta.textContent = t;
 
             const de = document.getElementById('previewDescription');
-            if (de) {
-                de.textContent = d;
-                de.style.fontSize = descriptionSize; // Apply size to description
-            }
+            if (de) de.textContent = d;
 
-            // Updated designer footer text style for readability
             const ae = document.getElementById('previewAdditionalInfo');
             if (ae) {
                 ae.textContent = a;
                 ae.style.display = a.trim() ? 'block' : 'none';
-                ae.classList.remove('text-gray-400'); // Remove old style
-                ae.classList.add('text-gray-200'); // Use brighter color
-                ae.style.fontSize = '0.875rem'; // Fixed size for footer visibility in preview
             }
         }
         
